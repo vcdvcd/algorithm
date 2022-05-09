@@ -1,5 +1,4 @@
 import java.util.*;
-
 public class Dp {
     //挑选硬币使得总和为rest，求最小硬币个数
     public static int f1(int[] arr, int rest, int index) {
@@ -89,12 +88,41 @@ public class Dp {
         }
         return dp[x][y][k];
     }
-
-    public static int getValue(int[][][] dp, int r, int c, int h) {
+    public static int getValue(int[][][] dp, int r, int c,int h) {
         if (r < 0 || r > 8 || c < 0 || c > 9) {
             return 0;
         }
         return dp[r][c][h];
+    }
+    public static int f31(int x, int y, int k) {
+        if (x < 0 || x > 8 || y < 0 || y > 9 || k < 0) {
+            return 0;
+        }
+        int[][] dp = new int[9][10];
+        dp[0][0] = 1;
+        for (int h = 1; h <= k; h++) {
+            int[][] newDp = new int[9][10];
+            for (int r = 0; r < 9; r++) {
+                for (int c = 0; c < 10; c++) {
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r + 1, c + 2);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r + 1, c - 2);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r - 1, c + 2);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r - 1, c - 2);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r + 2, c + 1);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r + 2, c - 1);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r - 2, c + 1);
+                    newDp[r][c] = newDp[r][c] + getValue(dp, r - 2, c - 1);
+                }
+            }
+            dp = newDp;
+        }
+        return dp[x][y];
+    }
+    public static int getValue(int[][] dp, int r, int c) {
+        if (r < 0 || r > 8 || c < 0 || c > 9) {
+            return 0;
+        }
+        return dp[r][c];
     }
 
     //先手后手，获胜者最大分数
@@ -229,18 +257,52 @@ public class Dp {
         }
         return max;
     }
+    public static boolean makesquare(int[] matchsticks) {
+        int sum = 0;
+        int n = matchsticks.length;
+        for(int i = 0;i < n;i++){
+            sum += matchsticks[i];
+        }
+        Arrays.sort(matchsticks);
+        if(sum % 4 != 0 || matchsticks[n - 1] > sum / 4) return false;
+        int target = sum / 4;
+        int[] dp = new int[1 << n];
+        Arrays.fill(dp,-1);
+        dp[0] = 0;
+        for(int i = 0;i < (1 << n);i++){
+             if(dp[i] == -1) continue;
+            for(int j = 0;j < n;j++){
+                if(((1 << j) & i) != 0) continue;
+                int next = i | (1 << j);
+                if(dp[next] != -1) continue;
+                if(dp[i] % target + matchsticks[j] <= target){
+                    dp[next] = dp[i] + matchsticks[j];
+                }else{
+                    break;
+                }
+            }
+        }
+        return dp[(1 << n) - 1] == sum;
+    }
     public static void main(String[] args) {
         //System.out.println(f1(new int[]{2,3,3,5,7},19,0));
         //System.out.println(f4(new int[]{2,3,3,5,7},19));
-        //System.out.println(f2(7,7,10));
-        //System.out.println(f3(7,7,10));
+//        System.out.println(f2(7,7,10));
+//        System.out.println(f3(7,7,10));
+//        System.out.println(f31(7,7,10));
         //System.out.println(p(new int[]{2,4,5,6,7}));
         //System.out.println(p1(new int[]{2,4,5,6,7}));
         //change(500,new int[]{3,5,7,8,9,10,11});
         //logarithm();
-        List<Integer> list = diffWaysToCompute("2*3-4*5-23+46");
-        list.forEach(System.out::println);
-        isSubsequence("abc", "ahbgdc");
-        System.out.println(maxRotateFunction(new int[]{}));
+//        List<Integer> list = diffWaysToCompute("2*3-4*5-23+46");
+//        list.forEach(System.out::println);
+//        isSubsequence("abc", "ahbgdc");
+//        System.out.println(maxRotateFunction(new int[]{}));
+        StringBuilder sb = new StringBuilder("abc");
+        long a = (long) (10e8 + 7);
+        System.out.println(a);
+//        src.remove(1);
+//        map.put(des,2);
+        Deque d = new LinkedList();
     }
 }

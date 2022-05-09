@@ -1,5 +1,4 @@
 import java.util.*;
-
 public class KMP {
     //str1 是主字符串，看看包不包含str2
     //str2是子字符串
