@@ -10,6 +10,8 @@
 
 1.(个人认为难题)猜数字大小IIhttps://leetcode-cn.com/problems/guess-number-higher-or-lower-ii/
 
+2.(经典问题)预测赢家https://leetcode.cn/problems/predict-the-winner/
+
 <h2>
     01背包问题 与 完全背包问题
 </h2>
@@ -56,7 +58,17 @@
 
 关键思想：**考虑基本模型，然后缩小问题范围，最后推出递推公式**
 
+5.香槟塔https://leetcode.cn/problems/champagne-tower/
 
+关键思想：**不单独计算每加入一瓶香槟后，每个杯子的容量，直接计算所有香槟加入后的情况。这样可以找到子问题**
+
+6.分汤https://leetcode.cn/problems/soup-servings/
+
+关键思想：**在某个值以后就近似于1，可节省大量时间。对数据进行约分，从大数据变成小数据**
+
+7.最大平均值和的分组https://leetcode.cn/problems/largest-sum-of-averages/
+
+关键思想：**因为是子数组可以求一下前缀和数组。**
 
 <h2>
     回文问题
@@ -82,7 +94,6 @@
 <h2>
     最长公共子序列问题
 </h2>
-
 1.两个字符串的删除操作https://leetcode-cn.com/problems/delete-operation-for-two-strings/
 
 <h1>上下两个问题的核心代码区别</h1>
@@ -112,7 +123,6 @@
 <h2>
     序列DP
 </h2>
-
 1.最长递增子序列https://leetcode-cn.com/problems/longest-increasing-subsequence/
 
 2.最长递增子序列个数https://leetcode-cn.com/problems/number-of-longest-increasing-subsequence/(1的变种)
