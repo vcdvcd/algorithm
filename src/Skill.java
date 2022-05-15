@@ -21,7 +21,7 @@ public class Skill {
         }while (res == 7);
         return res + 1;
     }
-    //===========以上将等概率返回1——>5修改成等概率返回1——>7========
+    //===========以上将等概率返回1——>5修改成等概率返回1——>7=========
     //最长有效括号子串 leetcode32
     public static int longestValidParentheses(String s) {
         char[] chs = s.toCharArray();
