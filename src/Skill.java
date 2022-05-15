@@ -1,3 +1,5 @@
+import java.util.HashMap;
+
 public class Skill {
     //等概率返回1——>5
     public static int f(){
@@ -20,4 +22,28 @@ public class Skill {
         return res + 1;
     }
     //===========以上将等概率返回1——>5修改成等概率返回1——>7========
+    //最长有效括号子串 leetcode32
+    public static int longestValidParentheses(String s) {
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        int[] dp = new int[n];//记录以第i位字符结尾的最长有效括号子串
+        int max = 0;
+        for(int i = 1;i < n;i++){
+            if(chs[i] == ')'){
+                int index = i - dp[i - 1] - 1;
+                if(index >= 0 && chs[index] == '('){
+                    dp[i] = dp[i - 1] + (index - 1 >= 0 ? dp[index - 1] : 0) + 2;
+                }
+            }
+            max = Math.max(max,dp[i]);
+        }
+        return max;
+    }
+    public static void main(String[] args) {
+        HashMap<Integer,Integer> map = new HashMap<>();
+        map.put(1,map.getOrDefault(1,0) + 1);
+        for(int i : map.values()){
+
+        }
+    }
 }
