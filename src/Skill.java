@@ -184,6 +184,86 @@ public class Skill {
         }
         return ans;
     }
+    //动态的topK问题 返回词频最大的前K个字符串
+    //思路：手写堆
+    public static class Node{
+        private String str;
+        private int cnt;
+        Node(String str,int cnt){
+            this.str = str;
+            this.cnt = cnt;
+        }
+    }
+    public static class TopK{
+        private HashMap<String,Node> numMap;
+        private HashMap<Node,Integer> indexMap;
+        private Node[] heap;
+        private int size;
+        TopK(int K){
+            numMap = new HashMap<>();
+            indexMap = new HashMap<>();
+            heap = new Node[K];
+            size = 0;
+        }
+        public void add(String str){
+            Node cur = null;
+            int preIndex = -1;
+            if(!numMap.containsKey(str)){
+                cur = new Node(str,1);
+                numMap.put(str,cur);
+                indexMap.put(cur,-1);
+            }else {
+                cur = numMap.get(str);
+                cur.cnt++;
+                preIndex = indexMap.get(cur);
+            }
+            if(preIndex == -1){
+                if(size == heap.length){
+                    if(cur.cnt > heap[0].cnt){
+                        heap[0] = cur;
+                        indexMap.put(cur,0);
+                        indexMap.put(heap[0],-1);
+                        heapify(0,size);
+                    }
+                }else{
+                    heap[size] = cur;
+                    indexMap.put(cur,size);
+                    heapInsert(size++);
+                }
+            }else{
+                heapify(preIndex,size);
+            }
+        }
+
+        public void heapify(int index,int heapSize) {
+            int left = index * 2 + 1;
+            while(left < heapSize){
+                int smallest = left + 1 < heapSize &&
+                        heap[left + 1].cnt < heap[left].cnt ? left + 1 : left;
+                smallest = heap[smallest].cnt < heap[index].cnt ? smallest : index;
+                if(smallest == index) break;
+                swap(heap[smallest],heap[index]);
+                index = smallest;
+                left = index * 2 + 1;
+            }
+        }
+        public void heapInsert(int index){
+            while(heap[index].cnt < heap[(index - 1) / 2].cnt){
+                swap(heap[index],heap[(index - 1) / 2]);
+                index = (index - 1) / 2;
+            }
+        }
+        public void swap(Node n1,Node n2){
+            String s1 = n1.str;
+            String s2 = n2.str;
+            int i1 = indexMap.get(s1);
+            int i2 = indexMap.get(s2);
+            heap[i1] = n2;
+            heap[i2] = n1;
+            indexMap.put(n1,i2);
+            indexMap.put(n2,i1);
+        }
+    }
     public static void main(String[] args) {
         HashMap<Integer,Integer> map = new HashMap<>();
         map.put(1,map.getOrDefault(1,0) + 1);
