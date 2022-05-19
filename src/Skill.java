@@ -1,6 +1,4 @@
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
 
 public class Skill {
     //等概率返回1——>5
@@ -264,11 +262,116 @@ public class Skill {
             indexMap.put(n2,i1);
         }
     }
+    //用栈实现队列
+    public static class StackQueue{
+        public Stack<Integer> pushStack;
+        public Stack<Integer> popStack;
+        StackQueue(){
+            pushStack = new Stack<>();
+            popStack = new Stack<>();
+        }
+        public void add(int n){
+            pushStack.add(n);
+            isEmpty();
+        }
+        public void isEmpty(){
+            if(popStack.isEmpty()){
+                while(!pushStack.isEmpty()){
+                    popStack.push(pushStack.pop());
+                }
+            }
+        }
+        public int pop(){
+            if(popStack.isEmpty() && pushStack.isEmpty()){
+                throw new RuntimeException("Stack is Empty!");
+            }
+            isEmpty();
+            return popStack.pop();
+        }
+    }
+    //用队列实现栈
+    public static class MyStack {
+        private Queue<Integer> q1;
+        private Queue<Integer> q2;
+        private boolean flag;
+        private int top;
+        public MyStack() {
+            q1 = new LinkedList<>();
+            q2 = new LinkedList<>();
+            flag = true;
+        }
+        public void push(int x) {
+            if(flag){
+                q1.offer(x);
+                top = x;
+            }else{
+                q2.offer(x);
+                top = x;
+            }
+        }
+        public int pop() {
+            if (flag) {
+                top = q1.peek();
+                while (q1.size() != 1) {
+                    top = q1.poll();
+                    q2.add(top);
+                }
+                flag = false;
+                return q1.poll();
+            } else {
+                top = q2.peek();
+                while (q2.size() != 1) {
+                    top = q2.poll();
+                    q1.add(top);
+                }
+                flag = true;
+                return q2.poll();
+            }
+        }
+        public int top() {
+            return top;
+        }
+        public boolean empty() {
+            return q1.isEmpty() && q2.isEmpty();
+        }
+    }
+    //leetcode 42 接雨水
+    //双指针
+    public static int trap(int[] height) {
+        int n = height.length;
+        int R = n - 1;
+        int L = 1;
+        int leftMax = height[0];
+        int rightMax = height[n - 1];
+        int ans = 0;
+        while(L <= R){
+            leftMax = Math.max(height[L],leftMax);
+            rightMax = Math.max(height[R],rightMax);
+            if(leftMax >= rightMax){
+                ans += rightMax - height[R--];
+            }else if(leftMax < rightMax){
+                ans += leftMax - height[L++];
+            }
+        }
+        return ans;
+    }
+    //给定一个数组arr,长度为N，你可以把任意长度大于0且小于N的前缀作为左部分，剩下的作为右部分。
+    //但是每种划分下都有左部分的最大值和右部分的最大值，请返回最大的，左部分最大值减去右部分最大值的绝对值。
+    public static int dividerMax(int[] arr){
+        int n = arr.length;
+        int max = Integer.MIN_VALUE;
+        for(int i = 0;i < n;i++){
+            max = Math.max(max,arr[i]);
+        }
+        return Math.max(max - arr[n - 1],max - arr[0]);
+    }
+    //有一道关于KMP的算法题，复习以后再来 （中级5 time 1：04:31）
+    //
     public static void main(String[] args) {
-        HashMap<Integer,Integer> map = new HashMap<>();
-        map.put(1,map.getOrDefault(1,0) + 1);
-        int[][] m = {{0,1,2,3},{4,5,6,7},{8,9,10,11},{12,13,14,15}};
-        int[][] m1 = {{0,1,2,3},{4,5,6,7},{8,9,10,11}};
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(1, map.getOrDefault(1, 0) + 1);
+        int[][] m = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}};
+        int[][] m1 = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}};
         rotate(m);
         zigzag(m1);
         for (int i = 0; i < m.length; i++) {
@@ -277,6 +380,5 @@ public class Skill {
             }
             System.out.println();
         }
-
     }
 }
