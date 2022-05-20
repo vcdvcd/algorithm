@@ -46,8 +46,8 @@ public class KMP {
         return res;
     }
     public static void main(String[] args) {
-        String s1 = "aacecaaa";
-        String s2 = "ce";
+        String s1 = "sklddasdkjalsdja";
+        String s2 = "kjals";
         System.out.println(getIndexOf(s1, s2));
     }
 }

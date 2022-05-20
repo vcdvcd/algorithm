@@ -366,7 +366,52 @@ public class Skill {
         return Math.max(max - arr[n - 1],max - arr[0]);
     }
     //有一道关于KMP的算法题，复习以后再来 （中级5 time 1：04:31）
-    //
+
+    //咖啡杯问题（很难的一道题）
+    //数组arr：表示几个咖啡机，这几个咖啡机生产一杯咖啡所需要的时间就是数组中的值，
+    //例如arr=[2,3,7]就表示第一台咖啡机生产一杯咖啡需要2单位时间，第二台需要3单位时间，第三台需要7单位时间。
+    //int N：表示有N个人需要用咖啡机制作咖啡，每人一杯，同时，假设制作完咖啡后，喝咖啡时间为0，一口闷。
+    //int a：表示用洗碗机洗一个咖啡杯需要的时间，串行运行。
+    //int b：表示咖啡杯也可以不洗，自然晾干的时间，咖啡杯要么洗，要么晾干。
+    //现在，请你求出这N个人从开始用咖啡杯制作咖啡到杯子洗好或者晾干的最少时间？
+    //思路：小根堆 + 动态规划
+    //先写个暴力版本
+    public static class CaffeMachine{
+//        public
+    }
+    //斐波那契数列的优化（类似的存在严格递推式的都可以优化成O（logN））
+    //原理：矩阵相乘 + 快速幂
+    public static int fibonacciPlus(int n){
+        if(n == 1 || n == 2) return 1;
+        int[][] t = {{1,1},{1,0}};
+        int[][] res = getMatrix(t,n - 2);
+        return res[0][0] + res[0][1];
+    }
+    //矩阵的快速幂
+    public static int[][] getMatrix(int[][] matrix,int n){
+        int[][] t = matrix;
+        int[][] res = {{1,0},{0,1}};
+        while(n > 0){
+            if(n % 2 != 0) {
+                res = matrixMultiply(res, t);
+            }
+            n /= 2;
+            t = matrixMultiply(t,t);
+        }
+        return res;
+    }
+    //矩阵相乘
+    public static int[][] matrixMultiply(int[][] m1,int[][] m2){
+        int[][] res = new int[m1.length][m2[0].length];
+        for(int i = 0;i < m1.length;i++){
+            for(int j = 0;j < m2[0].length;j++){
+                for(int k = 0;k < m1[0].length;k++){
+                    res[i][j] += m1[i][k] * m2[k][j];
+                }
+            }
+        }
+        return res;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -380,5 +425,6 @@ public class Skill {
             }
             System.out.println();
         }
+        System.out.println(fibonacciPlus(11));
     }
 }
