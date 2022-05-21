@@ -377,7 +377,49 @@ public class Skill {
     //思路：小根堆 + 动态规划
     //先写个暴力版本
     public static class CaffeMachine{
-//        public
+        public int finishTime;
+        public int time;
+        CaffeMachine(int t){
+            finishTime = t;
+            time = t;
+        }
+    }
+    public static class CaffeComparator implements Comparator<CaffeMachine>{
+        @Override
+        public int compare(CaffeMachine o1, CaffeMachine o2) {
+            return (o1.finishTime + o1.time) - (o2.finishTime + o2.time);
+        }
+    }
+    public static int f(int[] arr,int a,int b,int N){
+        PriorityQueue<CaffeMachine> queue = new PriorityQueue<>(new CaffeComparator());
+        for(int i = 0;i < arr.length;i++){
+            queue.add(new CaffeMachine(arr[i]));
+        }
+        CaffeMachine caffeMachine;
+        int[] finish = new int[N];
+        for(int i = 0;i < N;i++){
+            caffeMachine = queue.poll();
+            finish[i] = caffeMachine.finishTime;
+            caffeMachine.finishTime += caffeMachine.time;
+            queue.add(caffeMachine);
+        }
+        return f2(finish,a,b,0,0);
+    }
+    public static int f2(int[] finish,int a,int b,int index,int washTime){
+        if(index == finish.length - 1){
+            return Math.min(Math.max(finish[index],washTime) + a,finish[index] + b);
+        }
+        //newTime 是当前的咖啡杯，决定放到洗咖啡杯的机器上去洗完的时间
+        int newTime = Math.max(finish[index],washTime) + a;
+        //洗完剩余咖啡杯的最早时间
+        int next1 = f2(finish,a,b,index + 1,newTime);
+        //比较当前咖啡杯洗完的时间和剩余咖啡杯洗完的时间
+        int p1 = Math.max(newTime,next1);
+        //当前杯子决定挥发
+        int dry = finish[index] + b;
+        int next2 = f2(finish,a,b,index + 1,washTime);
+        int p2 = Math.max(dry,next2);
+        return Math.min(p1,p2);
     }
     //斐波那契数列的优化（类似的存在严格递推式的都可以优化成O（logN））
     //原理：矩阵相乘 + 快速幂
