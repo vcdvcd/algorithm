@@ -498,6 +498,93 @@ public class Skill {
         }
         return res;
     }
+    //分配工作问题
+    public static class Job{
+        public int money;
+        public int hard;
+        Job(int m,int h){
+            money = m;
+            hard = h;
+        }
+    }
+    //将任务以难度从小到大，相同难度的任务以报酬从大到小排序
+    public static class JobComparator implements Comparator<Job>{
+        @Override
+        public int compare(Job o1, Job o2) {
+            return o1.hard == o2.hard ? o2.money - o1.money : o1.hard - o2.hard;
+        }
+    }
+    public static int[] pay(Job[] jobarr,int[] p){
+        Arrays.sort(jobarr,new JobComparator());
+        TreeMap<Integer,Integer> map = new TreeMap<>();
+        int[] res = new int[p.length];
+        Job pre = jobarr[0];
+        map.put(jobarr[0].hard,jobarr[0].money);
+        for(int i = 1;i < jobarr.length;i++){
+            if(jobarr[i].hard != pre.hard && jobarr[i].money > pre.money){
+                pre = jobarr[i];
+                map.put(pre.hard,pre.money);
+            }
+        }
+        for(int i = 0;i < p.length;i++){
+            res[i] = map.floorKey(p[i]) == null ? 0 : map.floorKey(p[i]);
+        }
+        return res;
+    }
+    //给定一个字符串，如果该字符串符合人们日常书写一个整数的形式，返回int类型的这个数，如果越界或不符合输出-1
+    public static int convert(String s){
+        if(s == null || s.equals("")) return -1;
+        char[] chs = s.toCharArray();
+        if(!isValid(chs)){
+            throw new RuntimeException("can't convert");
+        }
+        int d = Integer.MIN_VALUE;
+        int c = d / 10;
+        int m = d % 10;
+        int ans = 0;
+        boolean f = chs[0] == '-';
+        for(int i = f ? 1 : 0;i < chs.length;i++){
+            int a = '0' - chs[i];
+            //防止溢出
+            if(ans < c || (ans == c && a < m))
+                throw new RuntimeException("cant' convert");
+            ans = ans * 10 + a;
+        }
+        if(!f && ans == Integer.MIN_VALUE)
+            throw new RuntimeException("can't convert");
+        return f ? ans : -ans;
+    }
+    public static boolean isValid(char[] s){
+        if(s[0] != '-' && (s[0] < '0' || s[0] > '9')) return false;
+        if(s[0] == '-' && s.length == 1) return false;
+        if(s[0] == '-' && s[1] == '0') return false;
+        if(s[0] == '0' && s.length > 1) return false;
+        for(int i = 1;i < s.length;i++){
+            if(s[i] < '0' || s[i] > '9') return false;
+        }
+        return true;
+    }
+    //给你一个字符串数组arr
+    //例如String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"} 把这个目录结构打印出来，子目录在父目录的下面右进两个空格
+    public static class PreTree{
+        public String name;
+        public HashMap<String,PreTree> nexts;
+        PreTree(String s){
+            name = s;
+            nexts = new HashMap<>();
+        }
+    }
+    public static void build(PreTree node,String[] arr){
+
+    }
+    public static void printD(String[] arr){
+        PreTree node = new PreTree("");
+        for(String s : arr) {
+            build(node,s.split("\\\\"));
+        }
+
+    }
+
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -513,5 +600,6 @@ public class Skill {
         }
         System.out.println(fibonacciPlus(11));
         System.out.println(isValid("12345", "51234"));
+        System.out.println(convert("2147483649"));
     }
 }
