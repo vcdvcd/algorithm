@@ -366,7 +366,51 @@ public class Skill {
         return Math.max(max - arr[n - 1],max - arr[0]);
     }
     //有一道关于KMP的算法题，复习以后再来 （中级5 time 1：04:31）
-
+    public static int KMP(String s1,String s2){
+        if(s2.length() < 1)
+            return 0;
+        if(s1 == null || s2 == null || s2.length() > s1.length())
+            return -1;
+        char[] str1 = s1.toCharArray();
+        char[] str2 = s2.toCharArray();
+        int[] nextArr = getNextArr(str2);
+        int i = 0;
+        int j = 0;
+        while(i < str1.length && j < str2.length){
+            if(str1[i] == str2[j]){
+                i++;
+                j++;
+            }else if(j == 0){
+                i++;
+            }else{
+                j = nextArr[j];
+            }
+        }
+        return j == str2.length ? i - j : -1;
+    }
+    public static int[] getNextArr(char[] str){
+        if(str.length == 1)
+            return new int[]{-1};
+        int[] res = new int[str.length];
+        res[0] = -1;
+        res[1] = 0;
+        int i = 2;
+        int j = 0;
+        while(i < str.length){
+            if(str[i - 1] == str[j]){
+                res[i++] = ++j;
+            }else if(j == 0){
+                res[i++] = 0;
+            }else{
+                j = res[j];
+            }
+        }
+        return res;
+    }
+    public static boolean isValid(String s1,String s2){
+        String s = s1 + s1;
+        return KMP(s, s2) != -1;
+    }
     //咖啡杯问题（很难的一道题）
     //数组arr：表示几个咖啡机，这几个咖啡机生产一杯咖啡所需要的时间就是数组中的值，
     //例如arr=[2,3,7]就表示第一台咖啡机生产一杯咖啡需要2单位时间，第二台需要3单位时间，第三台需要7单位时间。
@@ -468,5 +512,6 @@ public class Skill {
             System.out.println();
         }
         System.out.println(fibonacciPlus(11));
+        System.out.println(isValid("12345", "51234"));
     }
 }
