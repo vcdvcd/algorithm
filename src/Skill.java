@@ -568,23 +568,110 @@ public class Skill {
     //例如String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"} 把这个目录结构打印出来，子目录在父目录的下面右进两个空格
     public static class PreTree{
         public String name;
-        public HashMap<String,PreTree> nexts;
+        public TreeMap<String,PreTree> nexts;
         PreTree(String s){
             name = s;
-            nexts = new HashMap<>();
+            nexts = new TreeMap<>();
         }
     }
     public static void build(PreTree node,String[] arr){
-
+        PreTree cur = node;
+        for(String s : arr){
+            if(!cur.nexts.containsKey(s)){
+                cur.nexts.put(s,new PreTree(s));
+            }
+            cur = cur.nexts.get(s);
+        }
     }
     public static void printD(String[] arr){
         PreTree node = new PreTree("");
         for(String s : arr) {
             build(node,s.split("\\\\"));
         }
-
+        printAns(node,0);
     }
-
+    public static void printAns(PreTree node,int i){
+        TreeMap<String, PreTree> nexts = node.nexts;
+        if(nexts.size() == 0) return;
+        for(PreTree preTree : nexts.values()){
+            String res = "";
+            for(int j = 0;j < i * 2;j++){
+                res += " ";
+            }
+            System.out.println(res + preTree.name);
+            printAns(preTree,i + 1);
+        }
+    }
+    //二叉搜索树转换成头尾相连的双向链表
+    //leetcode 剑指offer 36
+    public static class Info{
+        public DoubleListNode start;
+        public DoubleListNode end;
+        Info(DoubleListNode s,DoubleListNode e){
+            start = s;
+            end = e;
+        }
+    }
+    public static Info f2(DoubleListNode x){
+        if(x == null){
+            return new Info(null,null);
+        }
+        Info leftInfo = f2(x.left);
+        Info rightInfo = f2(x.right);
+        DoubleListNode start;
+        DoubleListNode end;
+        if(leftInfo.end != null){
+            leftInfo.end.right = x;
+        }
+        x.left = leftInfo.end;
+        x.right = rightInfo.start;
+        if(rightInfo.start != null){
+            rightInfo.start.left = x;
+        }
+        start = leftInfo.start == null ? x : leftInfo.start;
+        end = rightInfo.end == null ? x : rightInfo.end;
+        return new Info(start,end);
+    }
+    public DoubleListNode treeToDoublyList(DoubleListNode root) {
+        if(root == null) return null;
+        Info info = f2(root);
+        info.start.left = info.end;
+        info.end.right = info.start;
+        return info.start;
+    }
+    //leetcode 53 最大子数组和
+    public static int maxSubArray(int[] nums) {
+        int n = nums.length;
+        int cur = 0;
+        int max = Integer.MIN_VALUE;
+        for (int i = 0; i < n; i++) {
+            cur += nums[i];
+            max = Math.max(max,cur);
+            cur = cur < 0 ? 0 : cur;
+        }
+        return max;
+    }
+    //最大子数组和的变种题目。求矩形的最大子矩阵,返回最大值
+    public static int maxSumMatrix(int[][] ma){
+        int n = ma.length;
+        int m = ma[0].length;
+        int max = Integer.MIN_VALUE;
+        int cur;
+        int[] cnt;
+        for (int i = 0; i < n; i++) {
+            cnt = new int[m];
+            for (int j = i; j < n; j++) {
+                cur = 0;
+                for (int k = 0; k < m; k++) {
+                    cnt[k] += ma[j][k];
+                    cur += cnt[k];
+                    max = Math.max(max,cur);
+                    cur = cur < 0 ? 0 : cur;
+                }
+            }
+        }
+        return max;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -600,6 +687,8 @@ public class Skill {
         }
         System.out.println(fibonacciPlus(11));
         System.out.println(isValid("12345", "51234"));
+        String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"};
+        printD(arr);
         System.out.println(convert("2147483649"));
     }
 }

@@ -38,22 +38,20 @@ public class DoubleListNode {
             h=h.right;
         }
     }
+
     public static void main(String[] args) {
         DoubleListNode doubleListNode =new DoubleListNode(1);
         DoubleListNode doubleListNode2 =new DoubleListNode(2);
         DoubleListNode doubleListNode3 =new DoubleListNode(3);
         DoubleListNode doubleListNode4 =new DoubleListNode(4);
         DoubleListNode doubleListNode5 =new DoubleListNode(5);
-        doubleListNode.right=doubleListNode2;
-        doubleListNode2.left=doubleListNode;
-        doubleListNode2.right=doubleListNode3;
-        doubleListNode3.left=doubleListNode2;
-        doubleListNode3.right=doubleListNode4;
-        doubleListNode4.left=doubleListNode3;
-        doubleListNode4.right=doubleListNode5;
-        doubleListNode5.left=doubleListNode4;
+        doubleListNode4.left = doubleListNode2;
+        doubleListNode4.right = doubleListNode5;
+        doubleListNode2.left = doubleListNode;
+        doubleListNode2.right = doubleListNode3;
 //        System.out.println(doubleListNode2.left.val);
 //        DoubleListNode doubleListNode1 = reverseList(doubleListNode);
-        show1(doubleListNode);
+//        show1(doubleListNode);
     }
 }
+
