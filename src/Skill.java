@@ -672,6 +672,31 @@ public class Skill {
         }
         return max;
     }
+    //s中只有"."或者"X"两种字符
+    //路灯可以影响左中右三个位置
+    //至少需要多少灯，可以把"."都点亮
+    public static int minLight(String s){
+        if(s == null || s.equals("")) return 0;
+        char[] chs = s.toCharArray();
+        int light = 0;
+        int i = 0;
+        while(i < chs.length){
+            if(chs[i] == 'X'){
+                i++;
+            }else{
+                light++;//默认放在i位置上
+                if(i + 1 == chs.length) break;
+                else {//如果i+1不越界
+                    if (chs[i + 1] == 'X') {
+                        i += 2;
+                    } else {//贪心：把灯放在i+1位置上，这样就可以跳过i+2
+                        i += 3;
+                    }
+                }
+            }
+        }
+        return light;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -689,6 +714,7 @@ public class Skill {
         System.out.println(isValid("12345", "51234"));
         String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"};
         printD(arr);
-        System.out.println(convert("2147483649"));
+//        System.out.println(convert("2147483649"));
+        System.out.println(minLight(".X.X.X.X.X.X.X.X.X."));
     }
 }
