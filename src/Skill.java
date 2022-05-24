@@ -697,6 +697,55 @@ public class Skill {
         }
         return light;
     }
+    //已知一棵没有重复节点的二叉树，提供它的前序数组和中序数组，给出它的后序数组
+    public static int[] posTree(int[] pre,int[] in){
+        HashMap<Integer,Integer> map = new HashMap<>();
+        int N = pre.length;
+        int[] pos = new int[N];
+        for(int i = 0; i < N; i++){
+            map.put(in[i],i);
+        }
+        buildPos(pre,in,pos,0,N - 1,0,N - 1,0,N - 1,map);
+        return pos;
+    }
+    public static void buildPos(int[] pre,int[] in,int[] pos,int prei,int prej,int ini,int inj,int posi,int posj,HashMap<Integer,Integer> map){
+        if(prei > prej) return;//如果左边界大于右边界，返回
+        if(prei == prej){//只有一个数值，直接填写
+            pos[posj] = pre[prei];
+            return;
+        }
+        pos[posj] = pre[prei];//先序数组的第一个肯定是后序数组的最后一个
+        int find = map.get(pre[prei]);//找到中序数组中根节点的位置，左侧就是左子树，右侧就是右子树
+        buildPos(pre,in,pos,prei + 1,prei + find - ini,ini,find - 1,posi,posi + find - ini - 1,map);//左子树递归
+        buildPos(pre,in,pos,prei + find - ini + 1,prej,find + 1,inj,posi + find - ini,posj - 1,map);//右子树递归
+    }
+    //下面两个考虑写不写，太恶心了
+    //中文表示数字
+
+    //英文表示数字
+
+    //完全二叉树节点个数
+    public static int countNodes(TreeNode root){
+        if(root == null) return 0;
+        return findH(root,1,countH(root,1));
+    }
+    //h是整棵树的深度，level是当前root节点处于的深度
+    public static int findH(TreeNode root,int level,int h){
+        //如果来到了最底层，说明来到了叶节点，直接返回1
+        if(level == h) return 1;
+        //如果右子树的左节点最深和整棵树的深度一样，说明整棵树的左子树是满二叉树，因此只需要递归右子树即可。
+        if(countH(root.right,level + 1) == h)
+            return (1 << (h - level)) + findH(root.right,level + 1,h);
+        else//否则说明右子树是满二叉树，并且右子树的深度只比整棵树的深度少1，因为整棵树是完全二叉树，因此只需要递归左子树即可
+            return (1 << (h - level - 1)) + findH(root.left,level + 1,h);
+    }
+    public static int countH(TreeNode root,int level){
+        while(root != null){
+            level++;
+            root = root.left;
+        }
+        return level - 1;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -716,5 +765,8 @@ public class Skill {
         printD(arr);
 //        System.out.println(convert("2147483649"));
         System.out.println(minLight(".X.X.X.X.X.X.X.X.X."));
+        int[] pre = {1,2,4,5,3,6,7};
+        int[] in = {4,2,5,1,6,3,7};
+        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
     }
 }
