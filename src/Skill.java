@@ -746,6 +746,45 @@ public class Skill {
         }
         return level - 1;
     }
+    //最长递增子序列（最优解O(NlogN)）
+    public static int lengthOfLIS(int[] nums) {
+        int len = 1,n = nums.length;
+        if(n == 0) return 0;
+        int[] ends = new int[n];//ends[i]表示长度为i的子序列的最小末尾元素,并且得出的ends数组是个递增数组
+        ends[len] = nums[0];
+        for(int i = 1; i < n;i++){
+            if(ends[len] < nums[i]){
+                ends[++len] = nums[i];
+            }else{
+                int left = 1,right = len,pos = 0;
+                //二分查找大于nums[i]位于ends数组最右侧的数值位置
+                while(left <= right){
+                    int mid = (left + right) >> 1;
+                    if(ends[mid] < nums[i]){
+                        pos = mid;
+                        left = mid + 1;
+                    }else{
+                        right = mid - 1;
+                    }
+                }
+                ends[pos + 1] = nums[i];
+            }
+        }
+        return len;
+    }
+    //给定一个整数数组A，长度为n，有 1<= A[i] <= n ，且对于【1，n】的整数，其中部分元素会重复出现或者不出现，找出不出现的元素
+    public static void findNumNotInArray(int[] arr){
+        for(int i : arr){
+            while(arr[i - 1] != i){
+                int t = arr[i - 1];
+                arr[i - 1] = i;
+                i = t;
+            }
+        }
+        for (int i = 0; i < arr.length; i++) {
+            if(arr[i] != i + 1) System.out.print(i + 1 + " ");
+        }
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -767,6 +806,7 @@ public class Skill {
         System.out.println(minLight(".X.X.X.X.X.X.X.X.X."));
         int[] pre = {1,2,4,5,3,6,7};
         int[] in = {4,2,5,1,6,3,7};
-        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
+//        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
+        findNumNotInArray(pre);
     }
 }
