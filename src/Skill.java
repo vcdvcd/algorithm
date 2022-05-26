@@ -700,6 +700,105 @@ public class Skill {
             if(arr[i] != i + 1) System.out.print(i + 1 + " ");
         }
     }
+    //给定一个布尔表达式，由0、1、&、|和^等符号组成，以及一个想要的布尔结果result，实现一个函数，算出有几种括号的放法可使该表达式
+    //递归版本会超时
+    public static int express(String s,boolean desired){
+        if(s == null || s.equals("")) return 0;
+        if(!isValid(s)) return 0;
+        return process(s.toCharArray(),0,s.length() - 1,desired);
+    }
+    //dp版本
+    public static int expressDp(String s,int result){
+        int n = s.length();
+        char[] chs = s.toCharArray();
+        int[][][] dp = new int[n][n][2];
+        for(int i = 0; i < n;i += 2){
+            dp[i][i][0] = chs[i] == '0' ? 1 : 0;
+            dp[i][i][1] = chs[i] == '1' ? 1 : 0;
+        }
+        for(int i = n - 3; i >= 0 ;i -= 2){
+            for(int j = i + 2;j < n; j += 2){
+                for(int k = i + 1; k < j;k += 2){
+                    if (chs[k] == '&') {
+                        dp[i][j][1] += dp[i][k - 1][1] * dp[k + 1][j][1];
+                        dp[i][j][0] += dp[i][k - 1][0] * dp[k + 1][j][1];
+                        dp[i][j][0] += dp[i][k - 1][1] * dp[k + 1][j][0];
+                        dp[i][j][0] += dp[i][k - 1][0] * dp[k + 1][j][0];
+                    } else if (chs[k] == '|') {
+                        dp[i][j][1] += dp[i][k - 1][1] * dp[k + 1][j][0];
+                        dp[i][j][1] += dp[i][k - 1][0] * dp[k + 1][j][1];
+                        dp[i][j][1] += dp[i][k - 1][1] * dp[k + 1][j][1];
+                        dp[i][j][0] += dp[i][k - 1][0] * dp[k + 1][j][0];
+                    } else {
+                        dp[i][j][1] += dp[i][k - 1][1] * dp[k + 1][j][0];
+                        dp[i][j][1] += dp[i][k - 1][0] * dp[k + 1][j][1];
+                        dp[i][j][0] += dp[i][k - 1][0] * dp[k + 1][j][0];
+                        dp[i][j][0] += dp[i][k - 1][1] * dp[k + 1][j][1];
+                    }
+                }
+            }
+        }
+        return dp[0][n - 1][result];
+    }
+    public static int process(char[] str,int L,int R,boolean f){
+        if(L == R){
+            if(f)
+                return str[L] == '1' ? 1 : 0;
+            else
+                return str[L] == '0' ? 1 : 0;
+        }
+        int res = 0;
+        if (f) {
+            for (int i = L + 1; i < R; i += 2) {
+                switch (str[i]) {
+                    case '&':
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, true);
+                        break;
+                    case '|':
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, false);
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, true);
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, true);
+                        break;
+                    case '^':
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, true);
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, false);
+                        break;
+                }
+            }
+        }
+        else {
+            for (int i = L + 1; i < R; i += 2) {
+                switch (str[i]) {
+                    case '&':
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, true);
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, false);
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, false);
+                        break;
+                    case '|':
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, false);
+                        break;
+                    case '^':
+                        res += process(str, L, i - 1, true) * process(str, i + 1, R, true);
+                        res += process(str, L, i - 1, false) * process(str, i + 1, R, false);
+                        break;
+                }
+            }
+        }
+        return res;
+    }
+    public static boolean isValid(String s){
+        char[] chs = s.toCharArray();
+        if((chs.length & 1) == 0) return false;
+        for(int i = 0; i < chs.length; i += 2){
+            if(chs[i] != '0' && chs[i] != '1')
+                return false;
+        }
+        for(int i = 1;i < chs.length; i += 2){
+            if(chs[i] != '&' && chs[i] != '|' && chs[i] != '^')
+                return false;
+        }
+        return true;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -723,6 +822,9 @@ public class Skill {
 //        int[] in = {4,2,5,1,6,3,7};
 //        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
 //        findNumNotInArray(pre);
+//        System.out.println(express("0^1|1|0&0&0&1^0&0&0^1|0&1",
+//                true));
+        System.out.println(expressDp("0^1|1|0&0&0&1^0&0&0^1|0&1",1));
     }
 }
 //中文表示数字
