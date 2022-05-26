@@ -182,86 +182,6 @@ public class Skill {
         }
         return ans;
     }
-    //动态的topK问题 返回词频最大的前K个字符串
-    //思路：手写堆
-    public static class Node{
-        private String str;
-        private int cnt;
-        Node(String str,int cnt){
-            this.str = str;
-            this.cnt = cnt;
-        }
-    }
-    public static class TopK{
-        private HashMap<String,Node> numMap;
-        private HashMap<Node,Integer> indexMap;
-        private Node[] heap;
-        private int size;
-        TopK(int K){
-            numMap = new HashMap<>();
-            indexMap = new HashMap<>();
-            heap = new Node[K];
-            size = 0;
-        }
-        public void add(String str){
-            Node cur = null;
-            int preIndex = -1;
-            if(!numMap.containsKey(str)){
-                cur = new Node(str,1);
-                numMap.put(str,cur);
-                indexMap.put(cur,-1);
-            }else {
-                cur = numMap.get(str);
-                cur.cnt++;
-                preIndex = indexMap.get(cur);
-            }
-            if(preIndex == -1){
-                if(size == heap.length){
-                    if(cur.cnt > heap[0].cnt){
-                        heap[0] = cur;
-                        indexMap.put(cur,0);
-                        indexMap.put(heap[0],-1);
-                        heapify(0,size);
-                    }
-                }else{
-                    heap[size] = cur;
-                    indexMap.put(cur,size);
-                    heapInsert(size++);
-                }
-            }else{
-                heapify(preIndex,size);
-            }
-        }
-
-        public void heapify(int index,int heapSize) {
-            int left = index * 2 + 1;
-            while(left < heapSize){
-                int smallest = left + 1 < heapSize &&
-                        heap[left + 1].cnt < heap[left].cnt ? left + 1 : left;
-                smallest = heap[smallest].cnt < heap[index].cnt ? smallest : index;
-                if(smallest == index) break;
-                swap(heap[smallest],heap[index]);
-                index = smallest;
-                left = index * 2 + 1;
-            }
-        }
-        public void heapInsert(int index){
-            while(heap[index].cnt < heap[(index - 1) / 2].cnt){
-                swap(heap[index],heap[(index - 1) / 2]);
-                index = (index - 1) / 2;
-            }
-        }
-        public void swap(Node n1,Node n2){
-            String s1 = n1.str;
-            String s2 = n2.str;
-            int i1 = indexMap.get(s1);
-            int i2 = indexMap.get(s2);
-            heap[i1] = n2;
-            heap[i2] = n1;
-            indexMap.put(n1,i2);
-            indexMap.put(n2,i1);
-        }
-    }
     //用栈实现队列
     public static class StackQueue{
         public Stack<Integer> pushStack;
@@ -719,11 +639,6 @@ public class Skill {
         buildPos(pre,in,pos,prei + 1,prei + find - ini,ini,find - 1,posi,posi + find - ini - 1,map);//左子树递归
         buildPos(pre,in,pos,prei + find - ini + 1,prej,find + 1,inj,posi + find - ini,posj - 1,map);//右子树递归
     }
-    //下面两个考虑写不写，太恶心了
-    //中文表示数字
-
-    //英文表示数字
-
     //完全二叉树节点个数
     public static int countNodes(TreeNode root){
         if(root == null) return 0;
@@ -790,23 +705,269 @@ public class Skill {
         map.put(1, map.getOrDefault(1, 0) + 1);
         int[][] m = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}, {12, 13, 14, 15}};
         int[][] m1 = {{0, 1, 2, 3}, {4, 5, 6, 7}, {8, 9, 10, 11}};
-        rotate(m);
-        zigzag(m1);
-        for (int i = 0; i < m.length; i++) {
-            for (int j = 0; j < m[0].length; j++) {
-                System.out.print(m[i][j] + " ");
-            }
-            System.out.println();
-        }
-        System.out.println(fibonacciPlus(11));
-        System.out.println(isValid("12345", "51234"));
-        String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"};
-        printD(arr);
+//        rotate(m);
+//        zigzag(m1);
+//        for (int i = 0; i < m.length; i++) {
+//            for (int j = 0; j < m[0].length; j++) {
+//                System.out.print(m[i][j] + " ");
+//            }
+//            System.out.println();
+//        }
+//        System.out.println(fibonacciPlus(11));
+//        System.out.println(isValid("12345", "51234"));
+//        String[] arr = {"b\\cst","d\\","a\\d\\e","a\\b\\c"};
+//        printD(arr);
 //        System.out.println(convert("2147483649"));
-        System.out.println(minLight(".X.X.X.X.X.X.X.X.X."));
-        int[] pre = {1,2,4,5,3,6,7};
-        int[] in = {4,2,5,1,6,3,7};
+//        System.out.println(minLight(".X.X.X.X.X.X.X.X.X."));
+//        int[] pre = {1,2,4,5,3,6,7};
+//        int[] in = {4,2,5,1,6,3,7};
 //        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
-        findNumNotInArray(pre);
+//        findNumNotInArray(pre);
+    }
+}
+//中文表示数字
+class NumToCN{
+    public static String[] singles = {"一","二","三","四","五","六","七","八","九"};
+    public static String num1to99(int n) {
+        StringBuilder res = new StringBuilder();
+        if (n < 10) return singles[n - 1];
+        int d = n / 10;
+        int m = n % 10;
+        if (m == 0)
+            if (d == 1)
+                res.append("十");
+            else
+                res.append(singles[d - 1] + "十");
+        else
+            res.append(singles[d - 1] + "十" + singles[m - 1]);
+        return res.toString();
+    }
+    public static String num1to999(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 10) return singles[n - 1];
+        else if(n < 100) return num1to99(n);
+        else{
+            int d = n / 100;
+            int m = n % 100;
+            res.append(singles[d - 1] + "百");
+            if(m == 0) return res.toString();
+            else if(m >= 10){
+                res.append(num1to99(m));
+            }else{
+                res.append("零" + singles[m - 1]);
+            }
+        }
+        return res.toString();
+    }
+    public static String num1to9999(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 10) return singles[n - 1];
+        else if(n < 100) return num1to99(n);
+        else if(n < 1000) return num1to999(n);
+        else{
+            int d = n / 1000;
+            int m = n % 1000;
+            res.append(singles[d - 1] + "千");
+            if(m == 0) return res.toString();
+            else if(m > 100){
+                res.append(num1to999(m));
+            }else{
+                res.append("零" + num1to99(m));
+            }
+        }
+        return res.toString();
+    }
+    public static String num1to99999999(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 10) return singles[n - 1];
+        else if(n < 100) return num1to99(n);
+        else if(n < 1000) return num1to999(n);
+        else{
+            int d = n / 10000;
+            int m = n % 10000;
+            res.append(num1to9999(d) + "万");
+            if(m == 0) return res.toString();
+            else if(m > 1000){
+                res.append(num1to9999(m));
+            }
+            else{
+                res.append("零" + num1to999(m));
+            }
+        }
+        return res.toString();
+    }
+    public static String numberToCN(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 10) return singles[n - 1];
+        else if(n < 100) return num1to99(n);
+        else if(n < 1000) return num1to999(n);
+        else if(n < 10000_0000) return num1to99999999(n);
+        else{
+            if(n == Integer.MAX_VALUE){
+                res.append("二十一亿");
+                n %= (int)210000_0000;
+                res.append(num1to99999999(n));
+                return res.toString();
+            }
+            int d = n / (int)1000_00000;
+            int m = n % (int)1000_00000;
+            res.append(num1to99(d) + "亿");
+            if(m == 0) return res.toString();
+            else if(m > 10000000)
+                res.append(num1to99999999(m));
+            else
+                res.append("零" + num1to99999999(m));
+        }
+        return res.toString();
+    }
+    public static void main(String[] args) {
+        System.out.println(numberToCN(601500021));
+    }
+}
+//动态的topK问题 返回词频最大的前K个字符串
+//思路：手写堆
+class TopK{
+    public static class Node{
+        private String str;
+        private int cnt;
+        Node(String str,int cnt){
+            this.str = str;
+            this.cnt = cnt;
+        }
+    }
+    private HashMap<String, Node> numMap;
+    private HashMap<Node,Integer> indexMap;
+    private Node[] heap;
+    private int size;
+    TopK(int K){
+        numMap = new HashMap<>();
+        indexMap = new HashMap<>();
+        heap = new Node[K];
+        size = 0;
+    }
+    public void add(String str){
+        Node cur = null;
+        int preIndex = -1;
+        if(!numMap.containsKey(str)){
+            cur = new Node(str,1);
+            numMap.put(str,cur);
+            indexMap.put(cur,-1);
+        }else {
+            cur = numMap.get(str);
+            cur.cnt++;
+            preIndex = indexMap.get(cur);
+        }
+        if(preIndex == -1){
+            if(size == heap.length){
+                if(cur.cnt > heap[0].cnt){
+                    heap[0] = cur;
+                    indexMap.put(cur,0);
+                    indexMap.put(heap[0],-1);
+                    heapify(0,size);
+                }
+            }else{
+                heap[size] = cur;
+                indexMap.put(cur,size);
+                heapInsert(size++);
+            }
+        }else{
+            heapify(preIndex,size);
+        }
+    }
+
+    public void heapify(int index,int heapSize) {
+        int left = index * 2 + 1;
+        while(left < heapSize){
+            int smallest = left + 1 < heapSize &&
+                    heap[left + 1].cnt < heap[left].cnt ? left + 1 : left;
+            smallest = heap[smallest].cnt < heap[index].cnt ? smallest : index;
+            if(smallest == index) break;
+            swap(heap[smallest],heap[index]);
+            index = smallest;
+            left = index * 2 + 1;
+        }
+    }
+    public void heapInsert(int index){
+        while(heap[index].cnt < heap[(index - 1) / 2].cnt){
+            swap(heap[index],heap[(index - 1) / 2]);
+            index = (index - 1) / 2;
+        }
+    }
+    public void swap(Node n1, Node n2){
+        String s1 = n1.str;
+        String s2 = n2.str;
+        int i1 = indexMap.get(s1);
+        int i2 = indexMap.get(s2);
+        heap[i1] = n2;
+        heap[i2] = n1;
+        indexMap.put(n1,i2);
+        indexMap.put(n2,i1);
+    }
+}
+//英文表示数字
+class NumToEN {
+    public static String[] two = {"One","Two","Three","Four","Five","Six","Seven","Eight","Nine",
+            "Ten","Eleven","Twelve","Thirteen","Fourteen","Fifteen","Sixteen","Seventeen",
+            "Eighteen","Nineteen"};
+    public static String[] tens = {"Twenty","Thirty","Forty","Fifty","Sixty","Seventy","Eighty","Ninety"};
+    public static String[] t = {" Billion"," Million"," Thousand",""};
+    public static String numberToWords(int num) {
+        if(num == 0) return "Zero";
+        StringBuilder res = new StringBuilder();
+        if(num < 20) return two[num - 1];
+        else if(num < 100) return enNum1to99(num);
+        else if(num < 1000) return enNum1to999(num);
+        else{
+            if(num == Integer.MAX_VALUE){
+                res.append("Two Billion ");
+                num %= (int)2e9;
+            }
+            int h = (int)1e9;
+            int index = 0;
+            while(num != 0){
+                int cur = num / h;
+                num %= h;
+                if(cur != 0){
+                    res.append(enNum1to999(cur));
+                    res.append(t[index] + (num == 0 ? "" : " "));
+                }
+                h /= 1000;
+                index++;
+            }
+        }
+        return res.toString();
+    }
+    public static String enNum1to99(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 20){
+            return two[n - 1];
+        }
+        int d = n / 10;
+        int m = n % 10;
+        if(m == 0)
+            res.append(tens[d - 2]);
+        else
+            res.append(tens[d - 2] + " " + two[m - 1]);
+        return res.toString();
+    }
+    public static String enNum1to999(int n){
+        StringBuilder res = new StringBuilder();
+        if(n < 20)
+            return two[n - 1];
+        else if(n < 100)
+            return enNum1to99(n);
+        else{
+            int d = n / 100;
+            int m = n % 100;
+            if(m == 0)
+                res.append(two[d - 1] + " Hundred");
+            else
+                res.append(two[d - 1] + " Hundred " + enNum1to99(m));
+        }
+        return res.toString();
+    }
+
+    public static void main(String[] args) {
+        System.out.println(numberToWords(Integer.MAX_VALUE));
     }
 }
