@@ -904,7 +904,7 @@ public class Skill {
 //        Arrays.stream(posTree(pre, in)).forEach(System.out::print);
 //        findNumNotInArray(pre);
 //        System.out.println(express("0^1|1|0&0&0&1^0&0&0^1|0&1",
-//                true));
+//               true));
 //        System.out.println(expressDp("0^1|1|0&0&0&1^0&0&0^1|0&1",1));
         System.out.println(minDistance("intention",
                 "execution"));
