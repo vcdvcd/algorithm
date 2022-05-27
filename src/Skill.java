@@ -786,6 +786,26 @@ public class Skill {
         }
         return res;
     }
+    //最长无重复字符的子串
+    public static int findUnique(String s){
+        if(s == null || s.equals("")) return 0;
+        char[] chs = s.toCharArray();
+        int[] map = new int[256];//记录每个字符上次出现的位置
+        for (int i = 0; i < 256; i++) {
+            map[i] = -1;
+        }
+        int len = 0;
+        int pre = -1;
+        int cur = 0;
+        for (int i = 0; i < chs.length; i++) {
+            pre = Math.max(pre,map[chs[i]]);//pre取上次该字符出现的位置和上个字符上次出现的位置的较大值（也就是距离i最近的位置）
+            //取较小值是不合法的
+            cur = i - pre;//求出长度
+            len = Math.max(len,cur);
+            map[chs[i]] = i;//更新上次出现的位置
+        }
+        return len;
+    }
     public static boolean isValid(String s){
         char[] chs = s.toCharArray();
         if((chs.length & 1) == 0) return false;
@@ -798,6 +818,39 @@ public class Skill {
                 return false;
         }
         return true;
+    }
+    //编辑距离 leetcode 72
+    public static int minDistance(String word1, String word2){
+        char[] s1 = word1.toCharArray();
+        char[] s2 = word2.toCharArray();
+        int n = s1.length;
+        int m = s2.length;
+        //dp数组表示word1前i位字符串转换为word2的前j位字符串所需要的最小步骤
+        int[][] dp = new int[n + 1][m + 1];
+        for (int i = 1; i <= n; i++) {
+            dp[i][0] = i;
+        }
+        for (int j = 1; j <= m; j++) {
+            dp[0][j] = j;
+        }
+        for (int i = 1; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                //如果最后一位都相等，那么就只需要看s1的前i-1位和s2的前j-1位。不需要任何增，删，替换操作
+                if(s1[i - 1] == s2[j - 1]){
+                    dp[i][j] = dp[i - 1][j - 1];
+                }else{
+                    //如果不等的话，就要考虑增删和替换操作
+                    //dp[i - 1][j] + 1 :表示s1的前i-1位替换成s2的前j位所需要的步骤，在加上删除s1的第i位这个操作
+                    //dp[i][j - 1] + 1 ：表示s1的前i位替换成s2的前j-1位所需要的步骤，在加上增加s2的第j位这个操作
+                    //dp[i - 1][j - 1] + 1：表示s1的前i-1位替换成s2的前j-1位所需要的步骤，
+                    // 在加上替换s1的第i位变成s2的第j位这个操作
+                    //取上面三者的最小值
+                    //所有的增删替换都是针对s1。
+                    dp[i][j] = Math.min(dp[i - 1][j],Math.min(dp[i][j - 1],dp[i - 1][j - 1])) + 1;
+                }
+            }
+        }
+        return dp[n][m];
     }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
@@ -824,7 +877,10 @@ public class Skill {
 //        findNumNotInArray(pre);
 //        System.out.println(express("0^1|1|0&0&0&1^0&0&0^1|0&1",
 //                true));
-        System.out.println(expressDp("0^1|1|0&0&0&1^0&0&0^1|0&1",1));
+//        System.out.println(expressDp("0^1|1|0&0&0&1^0&0&0^1|0&1",1));
+        System.out.println(minDistance("intention",
+                "execution"));
+        System.out.println(findUnique("1324afasdasd"));
     }
 }
 //中文表示数字
