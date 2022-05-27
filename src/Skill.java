@@ -852,6 +852,34 @@ public class Skill {
         }
         return dp[n][m];
     }
+    //去除重复字母
+    public static String removeDuplicateLetters(String s){
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        int[] cnt = new int[26];
+        boolean[] f = new boolean[26];
+        Deque<Character> stack = new LinkedList<>();
+        StringBuilder sb = new StringBuilder();
+        for(int i = 0;i < n;i++){
+            cnt[chs[i] - 'a']++;
+        }
+        for (int i = 0; i < n; i++) {
+            if(f[chs[i] - 'a']) continue;
+            cnt[chs[i] - 'a']--;
+            while(!stack.isEmpty() && stack.peek() > chs[i]){
+                int cur = stack.peek() - 'a';
+                if(cnt[cur] == 0) break;
+                stack.poll();
+                f[cur] = false;
+            }
+            stack.push(chs[i]);
+            f[chs[i] - 'a'] = true;
+        }
+        while(!stack.isEmpty()){
+            sb.append(stack.poll());
+        }
+        return sb.reverse().toString();
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -881,6 +909,7 @@ public class Skill {
         System.out.println(minDistance("intention",
                 "execution"));
         System.out.println(findUnique("1324afasdasd"));
+        System.out.println(removeDuplicateLetters("cbacdcbc"));
     }
 }
 //中文表示数字
