@@ -880,6 +880,44 @@ public class Skill {
         }
         return sb.reverse().toString();
     }
+    //对字母表产生的所有长度不超过6的升序字符串按照字典排列编码如下：a(1),b(2),c(3)......z(26),ab(27),ac(28)......
+    //对于任意长度不超过16的升序字符串，返回其编码
+    //长度为len的字符串有多少个
+    public static int g(int len){
+        int res = 0;
+        for (int i = 1; i <= 26; i++) {
+            res += f(i,len);
+        }
+        return res;
+    }
+    //以ASCII为i的字母开头，长度为len的字符串有多少个
+    public static int f(int i,int len){
+        if(len == 1) return 1;
+        int res = 0;
+        for(int j = i + 1; j <= 26; j++){
+            res += f(j,len - 1);
+        }
+        return res;
+    }
+    public static int code(String s){
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        int res = 0;
+        if(n - 1 == 0) return chs[0] - 'a' + 1;
+        for (int i = 1; i < n; i++) {
+            res += g(i);
+        }
+        for(int i = 1;i < chs[0] - 'a' + 1;i++){
+            res += f(i,n);
+        }
+        for (int i = 0; i < n - 1; i++) {
+           int cur = chs[i] - 'a' + 1;
+            for (int j = cur + 1; j < chs[i + 1] - 'a' + 1; j++) {
+                res += f(j,n - i - 1);
+            }
+        }
+        return res + 1;
+    }
     public static void main(String[] args) {
         HashMap<Integer, Integer> map = new HashMap<>();
         map.put(1, map.getOrDefault(1, 0) + 1);
@@ -910,6 +948,7 @@ public class Skill {
                 "execution"));
         System.out.println(findUnique("1324afasdasd"));
         System.out.println(removeDuplicateLetters("cbacdcbc"));
+        System.out.println(code("az"));
     }
 }
 //中文表示数字
