@@ -269,7 +269,7 @@ public class Skill {
             rightMax = Math.max(height[R],rightMax);
             if(leftMax >= rightMax){
                 ans += rightMax - height[R--];
-            }else if(leftMax < rightMax){
+            }else {
                 ans += leftMax - height[L++];
             }
         }
@@ -852,7 +852,7 @@ public class Skill {
         }
         return dp[n][m];
     }
-    //去除重复字母
+    //去除重复字母 leetcode 316
     public static String removeDuplicateLetters(String s){
         char[] chs = s.toCharArray();
         int n = chs.length;
