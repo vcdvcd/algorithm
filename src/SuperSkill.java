@@ -82,9 +82,59 @@ public class SuperSkill {
         }
         return dp1[m];
     }
+    //给定两个一维int数组A和B，其中：A是长度为m，元素从小到大的有序数组，B是长度为n，元素从小到大的有序数组
+    //从A和B数组中找出第k小的数字。要求：使用尽量少的比较次数
+    public static int findKthNum(int[] A,int[] B,int k){
+        if(k == 0 || k > A.length + B.length) throw new RuntimeException("K is invalid!");
+        int n = A.length,m = B.length;
+        int[] shorts = n <= m ? A : B;
+        int[] longs = n > m ? A : B;
+        int s = shorts.length;
+        int l = longs.length;
+        //第一种情况 k的值小于较短数组的长度，那么就只要取出两个数组的前k个数字，进行查找上中位数即可
+        if(k <= s){
+            return getUpMid(shorts,0,k - 1,longs,0,k - 1);
+        }
+        //如果大于了较大数组的长度，那么就要分类讨论了。
+        //具体分类还是自己列例子就明了了。
+        if(k > l){
+            if(shorts[k - l - 1] >= longs[l - 1])
+                return shorts[k - l - 1];
+            if(longs[k - s - 1] >= shorts[s - 1])
+                return longs[k - s - 1];
+            return getUpMid(shorts,k - l,s - 1,longs,k - s,l - 1);
+        }
+        //k的值大于s且小于l
+        if(longs[k - s - 1] >= shorts[s - 1])
+            return longs[k - s -1];
+        return getUpMid(shorts,0,s - 1,longs,k - s,k - 1);
+    }
+    //查找两个数组的上中位数
+    //这里的写法有点难理解。
+    public static int getUpMid(int[] a1,int L1,int R1,int[] a2,int L2,int R2){
+        int m1 = 0;
+        int m2 = 0;
+        int offset = 0;
+        while(L1 < R1){
+            m1 = (L1 + R1) >> 1;
+            m2 = (L2 + R2) >> 1;
+            offset = ((R1 - L1 + 1) & 1) ^ 1;
+            if(a1[m1] > a2[m2]){
+                R1 = m1;
+                L2 = m2 + offset;
+            }else if(a1[m1] < a2[m2]){
+                R2 = m2;
+                L1 = m1 + offset;
+            }else{
+                return a1[m1];
+            }
+        }
+        return Math.min(a1[L1],a2[L2]);
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
         System.out.println(coins(new int[]{3,2,5},new int[]{1,2,4},5));
+        System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
     }
 }
