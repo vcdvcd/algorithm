@@ -110,7 +110,7 @@ public class SuperSkill {
         return getUpMid(shorts,0,s - 1,longs,k - s,k - 1);
     }
     //查找两个数组的上中位数
-    //这里的写法有点难理解。
+    //这里的写法有点难理解
     public static int getUpMid(int[] a1,int L1,int R1,int[] a2,int L2,int R2){
         int m1 = 0;
         int m2 = 0;
