@@ -1197,7 +1197,7 @@ class NumToEN {
         System.out.println(numberToWords(Integer.MAX_VALUE));
     }
 }
-class NotSolve{
+class Solved{
     /**
      * 假设有多个活动,完成每一个活动都需要一定的时间day,可以得到相应的奖励reward,并且活动之间存在先后关系
      * 选择从一个活动出发,需要将后续活动参与完毕,即要沿途做活动直到能到达终点(不存在环的情况,即不能重复做同一个活动)
@@ -1211,140 +1211,220 @@ class NotSolve{
      * 有序表的规则为天数增加则奖励也要增加,相同天数则取最大奖励
      * 它表示在天数为某一个数的情况下选择能够获得的最大收益并且需要时长最少的路线
      **/
-    public static class MaxRewardMinDays {
-        public static void main(String[] args) {
-            MaxRewardMinDays test = new MaxRewardMinDays();
-            int[][] matrix = new int[][]{
-                    {3, 2000, 0, 1, 1, 0, 0, 0, 0, 0},
-                    {3, 4000, 0, 0, 0, 1, 1, 0, 0, 0},
-                    {2, 2500, 0, 0, 0, 1, 0, 0, 0, 0},
-                    {1, 1600, 0, 0, 0, 0, 1, 1, 1, 0},
-                    {4, 3800, 0, 0, 0, 0, 0, 0, 0, 1},
-                    {2, 2600, 0, 0, 0, 0, 0, 0, 0, 1},
-                    {4, 4000, 0, 0, 0, 0, 0, 0, 0, 1},
-                    {3, 3500, 0, 0, 0, 0, 0, 0, 0, 0}
-            };
-            System.out.println(Arrays.toString(test.maxRewardMinDays(matrix, 10)));
+    public static void main(String[] args) {
+        int[][] matrix = new int[][]{
+                {3, 2000, 0, 1, 1, 0, 0, 0, 0, 0},
+                {3, 4000, 0, 0, 0, 1, 1, 0, 0, 0},
+                {2, 2500, 0, 0, 0, 1, 0, 0, 0, 0},
+                {1, 1600, 0, 0, 0, 0, 1, 1, 1, 0},
+                {4, 3800, 0, 0, 0, 0, 0, 0, 0, 1},
+                {2, 2600, 0, 0, 0, 0, 0, 0, 0, 1},
+                {4, 4000, 0, 0, 0, 0, 0, 0, 0, 1},
+                {3, 3500, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+        int[] solved = solved(matrix, 15);
+        System.out.println(solved[0] + " " + solved[1]);
+    }
+    public static int[] solved(int[][] m,int limit){
+        HashMap<Integer, List<Integer>> build = build(m);
+        List<Way> ways = new ArrayList<>();
+        buildWay(build,m.length - 1,ways,m,m[m.length - 1][1],m[m.length - 1][0],limit);
+        Way[] ws = ways.toArray(new Way[0]);
+        Arrays.sort(ws,new WayComparator());
+        TreeMap<Integer,Integer> treeMap = new TreeMap<>();
+        Way pre = ws[0];
+        treeMap.put(pre.day,pre.money);
+        for (int i = 1; i < ws.length; i++) {
+            if(ws[i].day != pre.day && ws[i].money > pre.money){
+                pre = ws[i];
+                treeMap.put(ws[i].day,ws[i].money);
+            }
+        }
+        int day = treeMap.floorKey(limit);
+        int money = treeMap.get(day);
+        return new int[]{day,money};
+    }
+    public static class WayComparator implements Comparator<Way>{
 
+        @Override
+        public int compare(Way o1, Way o2) {
+            return o1.day == o2.day ? o2.money - o1.money : o1.day - o2.day;
         }
-        /**
-         * @param m     收益及关系矩阵,第一个和第二个数据项为天数和收益,接下去的数据项与其他活动的关系,如果为其他活动为它的后续活动就填1,否则填0
-         * @param limit 时间限制
-         * @return     最大奖励和最少时长
-         */
-        public int[] maxRewardMinDays(int[][] m, int limit) {
-            TreeMap<Integer, Integer> treeMap = new TreeMap<>();//天数:奖励
-            builtTreeMap(m, treeMap);
-            int day = treeMap.floorKey(limit);//返回小于等于limit的最大键
-            int reward = treeMap.get(day);
-            return new int[]{day, reward};
+    }
+    public static HashMap<Integer,List<Integer>> build(int[][] m){
+        HashMap<Integer,List<Integer>> map = new HashMap<>();
+        for(int i = m.length - 1;i >= 1;i--){
+            List<Integer> list = new ArrayList<>();
+            for (int j = i - 1; j >= 0 ; j--) {
+                if(m[j][i + 2] == 1){
+                    list.add(j);
+                }
+            }
+            map.put(i,list);
         }
-        public void builtTreeMap(int[][] m, TreeMap<Integer, Integer> treeMap) {
-            int len = m.length;
-            //对于每一个节点,都需要创造一张属于它自己的(天数:奖励)表
-            TreeMap<Integer, Integer>[] maps = new TreeMap[len];
-            //初始化,最后一个结点的表为它自己的天数:奖励
-            TreeMap<Integer, Integer> map = new TreeMap<>();
-            map.put(m[len - 1][0], m[len - 1][1]);
-            maps[len - 1] = map;
-            for (int i = 0; i < len - 1; i++) {
-                maps[i] = new TreeMap<Integer, Integer>();
-            }
-            //构造(结点:前驱结点)表,会额外浪费空间,这里只是为了便于逻辑的梳理和理解,在实战中是不需要这张表的
-            Map<Integer, ArrayList<Integer>> preNodeMaps = matrixToMap(m);
-            //从后往前更新
-            for (int node = len - 1; node >= 0; node--) {
-                System.out.println("现在更新" + node + "结点的前驱结点的表");
-                System.out.print("它对应的表的数据有{  ");
-                for (Map.Entry<Integer, Integer> entry : maps[node].entrySet()) {
-                    System.out.print(entry.getKey() + ":" + entry.getValue() + "  ");
-                }
-                System.out.println("}");
-                ArrayList<Integer> preNodeList = preNodeMaps.get(node);//获得当前结点的所有前驱结点
-                System.out.println("它的前驱结点有" + preNodeList );
-                //更新它的前驱结点的路线
-                for (int i = 0; i < preNodeList.size(); i++) {
-                    int preNode = preNodeList.get(i);
-                    System.out.println("现在更新前驱结点" + preNode);
-                    int preNodeDay = m[preNode][0];//前驱结点的天数
-                    int preNodeReward = m[preNode][1];//前驱结点的奖励
-                    System.out.println("它的天数为" + preNodeDay + ",奖励为" + preNodeReward);
-                    TreeMap<Integer, Integer> preNodeMap = maps[preNode];
-                    //对于前驱结点,需要连接它与当前结点表所有存在的路线
-                    for (Map.Entry<Integer, Integer> entry : maps[node].entrySet()) {
-                        int day = preNodeDay + entry.getKey();//更新的天数
-                        int reward = preNodeReward + entry.getValue();//更新的奖励
-                        update(day, reward, preNodeMap);
-                    }
-                    System.out.println("前驱结点" + preNode + "更新完毕");
-                }
-                System.out.println("结点" + node + "的前驱结点全部更新完毕\n");
-            }
-            for (int i = 0; i < len; i++) {
-                System.out.print("第" + (i + 1) + "张表的数据为{  ");
-                for (Map.Entry<Integer, Integer> entry : maps[i].entrySet()) {
-                    System.out.print(entry.getKey() + ":" + entry.getValue() + "  ");
-                }
-                System.out.println("}");
-            }
-            System.out.print("将所有的表整合到TreeMap中,");
-            for (Map<Integer, Integer> mp : maps) {//对于每一张表
-                for (Map.Entry<Integer, Integer> entry : mp.entrySet()) {
-                    //对于表中的每一个数据项,用TreeMap装进去
-                    int day = entry.getKey();
-                    int reward = entry.getValue();
-                    update(day,reward,treeMap);
-                }
-            }
-            System.out.print("得到TreeMap为\n"+"{  ");
-            for (Map.Entry<Integer, Integer> entry : treeMap.entrySet()) {
-                System.out.print(entry.getKey() + ":" + entry.getValue()+"  ");
+        return map;
+    }
+    public static void buildWay(HashMap<Integer,List<Integer>> map,int n,List<Way> ways,int[][] m,int money,int day,int limit){
+        if(day > limit) return;
+        if(n == 0){
+            ways.add(new Way(day,money));
+            return;
+        }
+        if(map.get(n) == null){
+            return;
+        }
+        List<Integer> list = map.get(n);
+        ways.add(new Way(day,money));
+        for(int i : list){
+            money += m[i][1];
+            day += m[i][0];
+            buildWay(map,i,ways,m,money,day,limit);
+            money -= m[i][1];
+            day -= m[i][0];
+        }
+    }
+}
+class Way{
+    public int day;
+    public int money;
+    Way(int d,int m){
+        day = d;
+        money = m;
+    }
+}
+//网上参考
+class MaxRewardMinDays {
+    public static void main(String[] args) {
+        MaxRewardMinDays test = new MaxRewardMinDays();
+        int[][] matrix = new int[][]{
+                {3, 2000, 0, 1, 1, 0, 0, 0, 0, 0},
+                {3, 4000, 0, 0, 0, 1, 1, 0, 0, 0},
+                {2, 2500, 0, 0, 0, 1, 0, 0, 0, 0},
+                {1, 1600, 0, 0, 0, 0, 1, 1, 1, 0},
+                {4, 3800, 0, 0, 0, 0, 0, 0, 0, 1},
+                {2, 2600, 0, 0, 0, 0, 0, 0, 0, 1},
+                {4, 4000, 0, 0, 0, 0, 0, 0, 0, 1},
+                {3, 3500, 0, 0, 0, 0, 0, 0, 0, 0}
+        };
+        System.out.println(Arrays.toString(test.maxRewardMinDays(matrix, 15)));
+    }
+    /**
+     * @param m     收益及关系矩阵,第一个和第二个数据项为天数和收益,接下去的数据项与其他活动的关系,如果为其他活动为它的后续活动就填1,否则填0
+     * @param limit 时间限制
+     * @return     最大奖励和最少时长
+     */
+    public int[] maxRewardMinDays(int[][] m, int limit) {
+        TreeMap<Integer, Integer> treeMap = new TreeMap<>();//天数:奖励
+        builtTreeMap(m, treeMap);
+        int day = treeMap.floorKey(limit);//返回小于等于limit的最大键
+        int reward = treeMap.get(day);
+        return new int[]{day, reward};
+    }
+    public void builtTreeMap(int[][] m, TreeMap<Integer, Integer> treeMap) {
+        int len = m.length;
+        //对于每一个节点,都需要创造一张属于它自己的(天数:奖励)表
+        TreeMap<Integer, Integer>[] maps = new TreeMap[len];
+        //初始化,最后一个结点的表为它自己的天数:奖励
+        TreeMap<Integer, Integer> map = new TreeMap<>();
+        map.put(m[len - 1][0], m[len - 1][1]);
+        maps[len - 1] = map;
+        for (int i = 0; i < len - 1; i++) {
+            maps[i] = new TreeMap<Integer, Integer>();
+        }
+        //构造(结点:前驱结点)表,会额外浪费空间,这里只是为了便于逻辑的梳理和理解,在实战中是不需要这张表的
+        Map<Integer, ArrayList<Integer>> preNodeMaps = matrixToMap(m);
+        //从后往前更新
+        for (int node = len - 1; node >= 0; node--) {
+            System.out.println("现在更新" + node + "结点的前驱结点的表");
+            System.out.print("它对应的表的数据有{  ");
+            for (Map.Entry<Integer, Integer> entry : maps[node].entrySet()) {
+                System.out.print(entry.getKey() + ":" + entry.getValue() + "  ");
             }
             System.out.println("}");
-
+            ArrayList<Integer> preNodeList = preNodeMaps.get(node);//获得当前结点的所有前驱结点
+            System.out.println("它的前驱结点有" + preNodeList );
+            //更新它的前驱结点的路线
+            for (int i = 0; i < preNodeList.size(); i++) {
+                int preNode = preNodeList.get(i);
+                System.out.println("现在更新前驱结点" + preNode);
+                int preNodeDay = m[preNode][0];//前驱结点的天数
+                int preNodeReward = m[preNode][1];//前驱结点的奖励
+                System.out.println("它的天数为" + preNodeDay + ",奖励为" + preNodeReward);
+                TreeMap<Integer, Integer> preNodeMap = maps[preNode];
+                //对于前驱结点,需要连接它与当前结点表所有存在的路线
+                for (Map.Entry<Integer, Integer> entry : maps[node].entrySet()) {
+                    int day = preNodeDay + entry.getKey();//更新的天数
+                    int reward = preNodeReward + entry.getValue();//更新的奖励
+                    update(day, reward, preNodeMap);
+                }
+                System.out.println("前驱结点" + preNode + "更新完毕");
+            }
+            System.out.println("结点" + node + "的前驱结点全部更新完毕\n");
         }
-        public void update(int day, int reward, TreeMap<Integer, Integer> treeMap) {
-            boolean isAdd=false;
-            //将数据装入treemap中,规则是天数增加则奖励也要增加,相同天数取最大奖励
-            if (treeMap.floorKey(day) == null) {//找不到小于等于day的key,直接添加
+        for (int i = 0; i < len; i++) {
+            System.out.print("第" + (i + 1) + "张表的数据为{  ");
+            for (Map.Entry<Integer, Integer> entry : maps[i].entrySet()) {
+                System.out.print(entry.getKey() + ":" + entry.getValue() + "  ");
+            }
+            System.out.println("}");
+        }
+        System.out.print("将所有的表整合到TreeMap中,");
+        for (Map<Integer, Integer> mp : maps) {//对于每一张表
+            for (Map.Entry<Integer, Integer> entry : mp.entrySet()) {
+                //对于表中的每一个数据项,用TreeMap装进去
+                int day = entry.getKey();
+                int reward = entry.getValue();
+                update(day,reward,treeMap);
+            }
+        }
+        System.out.print("得到TreeMap为\n"+"{  ");
+        for (Map.Entry<Integer, Integer> entry : treeMap.entrySet()) {
+            System.out.print(entry.getKey() + ":" + entry.getValue()+"  ");
+        }
+        System.out.println("}");
+
+    }
+    public void update(int day, int reward, TreeMap<Integer, Integer> treeMap) {
+        boolean isAdd=false;
+        //将数据装入treemap中,规则是天数增加则奖励也要增加,相同天数取最大奖励
+        if (treeMap.floorKey(day) == null) {//找不到小于等于day的key,直接添加
+            treeMap.put(day, reward);
+            isAdd=true;
+        } else {//找到了小于等于day的key
+            int ceilDay = treeMap.floorKey(day);
+            int ceilReward = treeMap.get(ceilDay);
+            if (reward > ceilReward) {//day比较大,那么它的reward也必须要大才可以添加,否则不添加
                 treeMap.put(day, reward);
                 isAdd=true;
-            } else {//找到了小于等于day的key
-                int ceilDay = treeMap.floorKey(day);
-                int ceilReward = treeMap.get(ceilDay);
-                if (reward > ceilReward) {//day比较大,那么它的reward也必须要大才可以添加,否则不添加
-                    treeMap.put(day, reward);
-                    isAdd=true;
-                }
             }
-            //如果添加了路线,需要检查天数比day大的路线reward是否大于它,如果不大于,就要把它删了
-            if (isAdd) {
-                for(Map.Entry<Integer,Integer> entry:treeMap.entrySet()){
-                    if(entry.getKey()>day&&entry.getValue()<=reward){
-                        treeMap.remove(entry.getKey());
-                    }
+        }
+        //如果添加了路线,需要检查天数比day大的路线reward是否大于它,如果不大于,就要把它删了
+        if (isAdd) {
+            for(Map.Entry<Integer,Integer> entry:treeMap.entrySet()){
+                if(entry.getKey()>day&&entry.getValue()<=reward){
+                    treeMap.remove(entry.getKey());
                 }
             }
         }
-        public Map<Integer, ArrayList<Integer>> matrixToMap(int[][] m) {
-            //构建(结点:直接前驱结点)的表
-            Map<Integer, ArrayList<Integer>> map = new HashMap<>();
-            for (int i = m.length - 1; i >= 0; i--) {
-                ArrayList<Integer> list = new ArrayList<>();
-                for (int j = i - 1; j >= 0; j--) {
-                    if (m[j][i + 2] == 1) {
-                        list.add(j);
-                    }
+    }
+    public Map<Integer, ArrayList<Integer>> matrixToMap(int[][] m) {
+        //构建(结点:直接前驱结点)的表
+        Map<Integer, ArrayList<Integer>> map = new HashMap<>();
+        for (int i = m.length - 1; i >= 0; i--) {
+            ArrayList<Integer> list = new ArrayList<>();
+            for (int j = i - 1; j >= 0; j--) {
+                if (m[j][i + 2] == 1) {
+                    list.add(j);
                 }
-                map.put(i, list);
             }
-            //存在没有前驱结点的结点,它的list为[]
-            System.out.println("前驱结点的表为");
-            for (Map.Entry<Integer, ArrayList<Integer>> next : map.entrySet()) {
-                System.out.println(next.getKey() + " : " + next.getValue());
-            }
-            System.out.println();
-            return map;
+            map.put(i, list);
         }
+        //存在没有前驱结点的结点,它的list为[]
+        System.out.println("前驱结点的表为");
+        for (Map.Entry<Integer, ArrayList<Integer>> next : map.entrySet()) {
+            System.out.println(next.getKey() + " : " + next.getValue());
+        }
+        System.out.println();
+        return map;
     }
 }
