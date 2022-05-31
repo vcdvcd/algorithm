@@ -131,10 +131,36 @@ public class SuperSkill {
         }
         return Math.min(a1[L1],a2[L2]);
     }
+    //约瑟夫环问题
+    //这个从1开始报数
+    /**
+     *
+     * @param m 表示要报的数
+     * @param len 表示当前数字个数
+     * @return 返回最终存活的元素，在元素长度为len时的编号为多少
+     */
+    public static int getNo(int m,int len){
+        if(len == 1) return 1;
+        return (getNo(m,len - 1) + m - 1) % len + 1;
+    }
+    //下面这个是从0开始报数的  leetcode 剑指 Offer 62 圆圈中最后剩下的数字
+//    public static int getNo(int m,int len){
+//        if(len == 1) return 0;
+//        return (getNo(m,len - 1) + m) % len;
+//    }
+    //进阶版约瑟夫问题
+    //给定一个数组A和n，n相当于上题的len，A中的元素就是上题的m，其中A中的元素轮流采用，相当于一个环形的数组,报数从0开始
+    //返回最后存活下来的元素在开始的编号为多少
+    public static int live(int[] arr,int n,int index){
+        if(n == 1) return 0;
+        return (live(arr,n - 1,index == arr.length - 1 ? 0 : index + 1) + arr[index]) % n;
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
         System.out.println(coins(new int[]{3,2,5},new int[]{1,2,4},5));
         System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
+        System.out.println(getNo(3,5));
+        System.out.println(live(new int[]{1,3,5},20,0));
     }
 }
