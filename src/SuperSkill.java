@@ -230,7 +230,7 @@ public class SuperSkill {
     //给定一个arr数组，数组无序，但每个值都是正数，在给定一个正数k，求arr的所有子数组中所有元素和为k的最长子数组长度
 //    public static int getMaxLength(int[] arr,int k){
 //
-//    }
+//   }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
