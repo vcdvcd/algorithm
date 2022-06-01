@@ -1,4 +1,4 @@
-import java.util.HashMap;
+import java.util.*;
 
 public class SuperSkill {
     //给定一个数组，求如果排序以后，相邻两个数的最大差值。要求时间复杂度O(N)，且要求不能使用非基于比较的排序
@@ -155,6 +155,78 @@ public class SuperSkill {
         if(n == 1) return 0;
         return (live(arr,n - 1,index == arr.length - 1 ? 0 : index + 1) + arr[index]) % n;
     }
+    //给定一个N * 3 的矩阵m，对于每一个长度为3的小数组arr，都表示一个大楼的三个数据。arr[0]表示大楼的左边界，arr[1]表示大楼的右边界
+    //arr[2]表示大楼的高度（一定大于0）。每座大楼的地基都在x轴上，大楼之间可能会有重叠，返回整体的轮廓数组。
+
+    //思路：通过最大高度变化来描述轮廓
+    public static class Node{
+        public int x;//x轴上的值
+        public boolean isAdd;//true表示加入高度，false表示删除高度
+        public int height;//高度
+        Node(int x,boolean isAdd,int h){
+            this.x = x;
+            this.isAdd = isAdd;
+            height = h;
+        }
+    }
+    //比较规则：以x的大小升序，如果x相同，isAdd为true的排前面，如果还是一样就无所谓顺序。
+    public static class BuildingComparator implements Comparator<Node>{
+
+        @Override
+        public int compare(Node o1, Node o2) {
+            if(o1.x != o2.x)
+                return o1.x - o2.x;
+            else
+                return o1.isAdd == o2.isAdd ? 0 : o1.isAdd ? -1 : 1;
+        }
+    }
+    public static List<List<Integer>> buildingOutline(int[][] buildings) {
+        List<List<Integer>> res = new ArrayList<>();
+        Node[] nodes = new Node[buildings.length * 2];//因为每座楼有左边界和右边界，那么高度变化会有两个，所以数组长度要*2
+        for(int i = 0;i < buildings.length;i++){
+            nodes[i * 2] = new Node(buildings[i][0],true,buildings[i][2]);//这个是左边界且高度变大
+            nodes[i * 2 + 1] =new Node(buildings[i][1],false,buildings[i][2]);//这个是右边界且高度变低
+        }
+        Arrays.sort(nodes,new BuildingComparator());
+        //记录每个高度出现的次数
+        TreeMap<Integer,Integer> heightTimes = new TreeMap<>();
+        //记录每个x点，所对应的高度
+        TreeMap<Integer,Integer> xHeight = new TreeMap<>();
+        for (int i = 0; i < nodes.length; i++) {
+            if(nodes[i].isAdd){//表示加入高度
+                if(!heightTimes.containsKey(nodes[i].height)){
+                    heightTimes.put(nodes[i].height,1);
+                }else{
+                    heightTimes.put(nodes[i].height,heightTimes.get(nodes[i].height) + 1);
+                }
+                xHeight.put(nodes[i].x,heightTimes.lastKey());//左边界直接将其和它的高度，添加到xHeight中
+            }else{//表示删除高度
+                if (heightTimes.get(nodes[i].height) == 1){//只剩一个就直接删除
+                    heightTimes.remove(nodes[i].height);
+                }else{
+                    heightTimes.put(nodes[i].height,heightTimes.get(nodes[i].height) - 1);
+                }
+                if(heightTimes.isEmpty()){//如果是空的说明当前高度降到了0
+                    xHeight.put(nodes[i].x,0);
+                }else
+                    xHeight.put(nodes[i].x,heightTimes.lastKey());//更新为最大的高度，因为轮廓只可能是当前区间最大高度
+            }
+        }
+        int preX = nodes[0].x;
+        int pre = xHeight.get(preX);
+        for(Map.Entry<Integer,Integer> e : xHeight.entrySet()){
+            int x = e.getKey();
+            int h = e.getValue();
+            //如果高度不同说明这里就是高度变化的地方，直接添加到答案中
+            if(pre != h){
+                if(pre != 0)//如果高度降低到0就不记录
+                    res.add(Arrays.asList(preX,x,pre));
+                preX = x;
+                pre = h;
+            }
+        }
+        return res;
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -162,5 +234,7 @@ public class SuperSkill {
         System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
         System.out.println(getNo(3,5));
         System.out.println(live(new int[]{1,3,5},20,0));
+        int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
+        buildingOutline(m);
     }
 }
