@@ -228,9 +228,48 @@ public class SuperSkill {
         return res;
     }
     //给定一个arr数组，数组无序，但每个值都是正数，在给定一个正数k，求arr的所有子数组中所有元素和为k的最长子数组长度
-//    public static int getMaxLength(int[] arr,int k){
-//
-//   }
+    //思路：简单的滑动窗口
+    public static int getMaxLength(int[] arr,int k){
+        int left = -1;
+        int right = 0;
+        int sum = arr[0];
+        int ans = 0;
+        while(right < arr.length){
+            if(sum < k){
+                if(right + 1 < arr.length)
+                    sum += arr[++right];
+                else break;
+            }else if(sum > k){
+                sum -= arr[++left];
+            }else{
+                ans = Math.max(right - left,ans);
+                if(right + 1 < arr.length)
+                    sum += arr[++right];
+                else break;
+            }
+        }
+        return ans;
+   }
+   //给定一个arr数组，数组无序(可能有负数和0)，在给定一个k，求arr的所有子数组中所有元素和为k的最长子数组长度
+    //思路：计算每个i位置的前缀和cnt[i]，以cnt[i],i的形式记录到哈希表中，如果key相同，只记录最早的一次。因为该题是求最长子数组长度
+   public static int maxSubArrayLen(int[] nums, int k) {
+        int n = nums.length;
+        int[] cnt = new int[n + 1];
+        HashMap<Integer,Integer> map = new HashMap<>();
+       for (int i = 1; i < cnt.length; i++) {
+           cnt[i] = cnt[i - 1] + nums[i - 1];
+           if(!map.containsKey(cnt[i]))
+                map.put(cnt[i],i);
+       }
+       map.put(0,0);
+       int ans = 0;
+       for (int i = n; i > ans; i--) {
+           if(map.containsKey(cnt[i] - k))//如果cnt[i] - k存在，那么只需要将该部分剥离出当前i的前缀和即可得出和为0的子数组
+               ans = Math.max(ans,i - map.get(cnt[i] - k));
+       }
+       return ans;
+   }
+   //给定一个arr数组，数组无序(可能有负数和0)，在给定一个k，求arr的所有子数组中所有元素和小于等于k的最长子数组长度
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -240,5 +279,7 @@ public class SuperSkill {
         System.out.println(live(new int[]{1,3,5},20,0));
         int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
         buildingOutline(m);
+        System.out.println(getMaxLength(new int[]{1,1,1}, 8));
+        System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
     }
 }
