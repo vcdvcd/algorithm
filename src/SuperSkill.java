@@ -270,6 +270,34 @@ public class SuperSkill {
        return ans;
    }
    //给定一个arr数组，数组无序(可能有负数和0)，在给定一个k，求arr的所有子数组中所有元素和小于等于k的最长子数组长度
+    public static int getMaxLengthPlus(int[] arr,int k){
+        int n = arr.length;
+        int[] minSum = new int[n];//minSum[i]表示以i开始的最小子数组和
+        int[] minSumEnd = new int[n];//minSumEnd[i]记录minSum[i]这个子数组和的右边界
+        minSum[n - 1] = arr[n - 1];
+        minSumEnd[n - 1] = n - 1;
+        for (int i = n - 2; i >= 0; i--) {
+            minSum[i] = Math.min(arr[i],arr[i] + minSum[i + 1]);
+            minSumEnd[i] = minSum[i] == arr[i] ? i : minSumEnd[i + 1];
+        }
+        int ans = 0;
+        int sum = 0;
+        int end = 0;//end是窗口右边界的下一个位置
+        for (int i = 0; i < n; i++) {//i表示窗口的左边界
+            while(end < n && sum + minSum[end] <= k){
+                sum += minSum[end];
+                end = minSumEnd[end] + 1;
+            }
+            ans = Math.max(ans,end - i);
+            if (end > i){//如果sum大于k，并且窗口内还有数，就删除最左侧的数
+                sum -= arr[i];
+            }else{//窗口内没有数了，说明以i开头的所有子数组和不可能小于等于k了
+                end = i + 1;
+            }
+        }
+        return ans;
+    }
+    //先手后手
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -281,5 +309,6 @@ public class SuperSkill {
         buildingOutline(m);
         System.out.println(getMaxLength(new int[]{1,1,1}, 8));
         System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
+        System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
     }
 }
