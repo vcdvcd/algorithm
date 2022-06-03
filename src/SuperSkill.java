@@ -309,6 +309,117 @@ public class SuperSkill {
         if(xor == 0) return false;
         else return true;
     }
+    //一个char类型的数组chs，其中所有的字符都不同。例如，chs['A','B','C',......,'Z',]，则字符串与整数的对应关系如下：
+    //A,B....Z,AA,AB......AZ,BA,BB.......ZZ,AAA...ZZZ,AAAA...
+    //1,2....26,27,28......52,53,54......702,703...18278,18279...
+    //给定一个数组chs，实现根据对应关系完成字符串与整数相互转换的两个函数
+    public static String getString(char[] chs,int i){
+        int n = chs.length;
+        int j = 1;
+        int cnt = -1;
+        StringBuilder sb = new StringBuilder();
+        while(i >= j){
+            i -= j;
+            sb.append(chs[0]);
+            j *= n;
+            cnt++;
+        }
+        j /= n;
+        if (i == 0) return sb.reverse().toString();
+        while(i != 0){
+            int index = i / j;
+            sb.setCharAt(cnt, (char) (sb.charAt(cnt--) + index));
+            i %= j;
+            j /= n;
+        }
+        return sb.reverse().toString();
+    }
+    public static int getNum(char[] chs,String s){
+        char[] str = s.toCharArray();
+        int n1 = chs.length;
+        int n2 = str.length;
+        int res = 0;
+        int j = 1;
+        for (int i = n2 - 1; i >= 0; i--) {
+            res += j * (str[i] - 'A' + 1);
+            j *= n1;
+        }
+        return res;
+    }
+    //给定一个二维数组matrix，每个单元表示一个整数，有正有负。给你操纵一条长度为0的蛇。
+    // 蛇从矩阵的最左侧进入，蛇每次能够到达当前位置的右上相邻，右侧相邻和右下相邻的单元格。蛇到达一个单元格以后自身的长度就会加上单元格的数值
+    //如果蛇的长度为负数，游戏结束。你有一个能力，可以将一个单元格数值变成其相反数，但是只能使用一次。问蛇的长度最大可以是多少
+
+    //Info用来记录来到当前单元格时使用能力和不使用能力分别的最大蛇长度。
+    public static class Info{
+        public int yes;
+        public int no;
+        Info(int y,int n){
+            yes = y;
+            no = n;
+        }
+    }
+    public static int snake(int[][] matrix){
+        int row = matrix.length;
+        int col = matrix[0].length;
+        int ans = 0;
+        Info[][] dp = new Info[row][col];
+        for (int i = 0; i < row; i++) {
+            for (int j = 0; j < col; j++) {
+                Info process = process(matrix, i, j,dp);
+                ans = Math.max(ans,Math.max(process.yes, process.no));
+            }
+        }
+        return ans;
+    }
+    public static Info process(int[][] matrix,int row,int col,Info[][] dp){
+        //如果是第一列，说明是刚进入matrix
+        if (dp[row][col] != null)
+            return dp[row][col];
+        if (col == 0){
+            dp[row][col] = new Info(-matrix[row][col],matrix[row][col]);
+            return dp[row][col];
+        }
+        int preY = -1;//记录之前使用能力时蛇的长度
+        int preN = -1;//记录之前没有使用能力时蛇的长度
+        //说明有左上有单元格
+        if (row > 0){
+            Info leftUp = process(matrix,row - 1,col - 1,dp);
+            if (leftUp.no >= 0){
+                preN = leftUp.no;
+            }
+            if (leftUp.yes >= 0){
+                preY = leftUp.yes;
+            }
+        }
+        Info left = process(matrix,row,col - 1,dp);
+        if (left.no >= 0){
+            preN = Math.max(preN,left.no);
+        }
+        if(left.yes >= 0){
+            preY = Math.max(preY,left.yes);
+        }
+        if (row < matrix.length - 1){
+            Info leftD = process(matrix,row + 1,col - 1,dp);
+            if (leftD.no >= 0){
+                preN = Math.max(preN,leftD.no);
+            }
+            if(leftD.yes >= 0){
+                preY = Math.max(preY,leftD.yes);
+            }
+        }
+        int yes = -1;
+        int no = -1;
+        if(preN >= 0){
+            no = preN + matrix[row][col];
+            yes = preN - matrix[row][col];
+        }
+        if (preY >= 0){
+            yes = Math.max(preY + matrix[row][col],yes);
+        }
+        dp[row][col] = new Info(yes,no);
+        return dp[row][col];
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -317,10 +428,15 @@ public class SuperSkill {
         System.out.println(getNo(3,5));
         System.out.println(live(new int[]{1,3,5},20,0));
         int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
-        buildingOutline(m);
+        List<List<Integer>> lists = buildingOutline(m);
         System.out.println(getMaxLength(new int[]{1,1,1}, 8));
         System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
         System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
         System.out.println(nim(new int[]{1,2,1,2,1,2}));
+        System.out.println(getString(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
+                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},8888));
+        System.out.println(getNum(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
+                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},"SPRING"));
+        System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
     }
 }
