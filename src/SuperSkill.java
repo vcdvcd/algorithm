@@ -297,7 +297,18 @@ public class SuperSkill {
         }
         return ans;
     }
-    //先手后手
+    //给一个数组arr，arr[i]表示铜钱数量，先手后手,每个人都必须拿铜钱，谁拿完铜钱谁胜，假设两人都绝顶聪明
+    //思路：如果一开始数组元素异或和为0，那么后手赢，如果一开始异或和不为0，先手胜。
+    //原理：尼姆博弈，只要保证让下一个人面对的是异或和为0的元素，那么无论如何他都无法再次选择出异或和为0的新数组，因为不能不取铜钱
+    //true表示先手赢，false表示后手赢
+    public static boolean nim(int[] arr){
+        int xor = 0;
+        for (int i = 0; i < arr.length; i++) {
+            xor ^= arr[i];
+        }
+        if(xor == 0) return false;
+        else return true;
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -310,5 +321,6 @@ public class SuperSkill {
         System.out.println(getMaxLength(new int[]{1,1,1}, 8));
         System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
         System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
+        System.out.println(nim(new int[]{1,2,1,2,1,2}));
     }
 }
