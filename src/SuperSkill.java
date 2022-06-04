@@ -470,6 +470,37 @@ public class SuperSkill {
         }
         list.add(String.valueOf(num));
     }
+    //最长公共子串（极致的压缩空间）
+    public static int MaxComString(String s1,String s2){
+        char[] c1 = s1.toCharArray();
+        char[] c2 = s2.toCharArray();
+        int row = 0;
+        int col = c2.length - 1;
+        int max = 0;
+        int ans = 0;
+        while(row < c1.length){
+            int i = row;
+            int j = col;
+            int len = 0;
+            while(i < c1.length && j < c2.length) {
+                if (c1[i] == c2[j]) {
+                    len++;
+                } else {
+                    len = 0;
+                }
+                if (len > max)
+                    max = len;
+                i++;
+                j++;
+            }
+            if (col > 0){
+                col--;
+            }else{
+                row++;
+            }
+        }
+        return max;
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
