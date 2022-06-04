@@ -420,6 +420,56 @@ public class SuperSkill {
         dp[row][col] = new Info(yes,no);
         return dp[row][col];
     }
+    //给定一个字符串str，str表示一个公式，公式里可能有整数，加减乘除符号和左右括号，返回公式的计算结果
+    public static int result(String str){
+        char[] chs = str.replaceAll(" ", "").toCharArray();
+        return f(chs,0)[0];
+    }
+    public static int[] f(char[] chs,int i){
+        int num = 0;
+        int res = 0;
+        LinkedList<String> list = new LinkedList<>();
+        int j = i;
+        while(j < chs.length && chs[j] != ')'){
+            if(chs[j] >= '0' && chs[j] <= '9'){
+                num = num * 10 + chs[j++] - '0';
+            }else if(chs[j] != '('){
+                addNum(list,num);
+                num = 0;
+                list.add(String.valueOf(chs[j++]));
+            }else{
+                int[] f = f(chs, j + 1);
+                num = f[0];
+                j = f[1] + 1;
+            }
+        }
+        addNum(list,num);
+        res += getNum(list);
+        return new int[]{res,j};
+    }
+    public static int getNum(LinkedList<String> list){
+        int ans = 0;
+        boolean f = !list.peekFirst().equals("-");
+        while(!list.isEmpty()){
+            String s = list.pollFirst();
+            if (s.equals("+") || s.equals("-"))
+                f = s.equals("+");
+            else
+                ans = f ? ans + Integer.parseInt(s) : ans - Integer.parseInt(s);
+        }
+        return ans;
+    }
+    public static void addNum(LinkedList<String> list,int num){
+        if (!list.isEmpty()){
+            String s = list.pollLast();
+            if (s.equals("*") || s.equals("/")){
+                int n = Integer.parseInt(list.pollLast());
+                num = s.equals("*") ? n * num : n / num;
+            }else
+                list.add(s);
+        }
+        list.add(String.valueOf(num));
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -438,5 +488,6 @@ public class SuperSkill {
         System.out.println(getNum(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
                 'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},"SPRING"));
         System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
+        System.out.println(result("-1"));
     }
 }
