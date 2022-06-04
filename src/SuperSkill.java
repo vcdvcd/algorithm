@@ -470,14 +470,13 @@ public class SuperSkill {
         }
         list.add(String.valueOf(num));
     }
-    //最长公共子串（极致的压缩空间）
+    //最长公共子串（极致的压缩空间,O(1)）
     public static int MaxComString(String s1,String s2){
         char[] c1 = s1.toCharArray();
         char[] c2 = s2.toCharArray();
         int row = 0;
         int col = c2.length - 1;
         int max = 0;
-        int ans = 0;
         while(row < c1.length){
             int i = row;
             int j = col;
