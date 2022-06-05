@@ -500,6 +500,38 @@ public class SuperSkill {
         }
         return max;
     }
+    //添加最少的字符让字符串变为回文字符串
+    public static String getPalindrome(String s){
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        int[][] dp = new int[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = 0;
+            for (int j = i + 1; j < n; j++) {
+                if(chs[i] == chs[j])
+                    dp[i][j] = dp[i + 1][j - 1];
+                else{
+                    dp[i][j] = Math.min(dp[i + 1][j],dp[i][j - 1]) + 1;
+                }
+            }
+        }
+        char[] ans = new char[n + dp[0][n - 1]];
+        int r = 0;
+        int c = n - 1;
+        int L = 0;
+        int R = ans.length - 1;
+        while(r <= c){
+            if(chs[r] == chs[c]){
+                ans[L++] = chs[r++];
+                ans[R--] = chs[c--];
+            }else if(dp[r + 1][c] < dp[r][c - 1]){
+                ans[L++] = ans[R--] = chs[r++];
+            }else{
+                ans[L++] = ans[R--] = chs[c--];
+            }
+        }
+        return String.valueOf(ans);
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -519,5 +551,6 @@ public class SuperSkill {
                 'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},"SPRING"));
         System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
         System.out.println(result("-1"));
+        System.out.println(getPalindrome("ab123c32"));
     }
 }
