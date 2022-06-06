@@ -532,6 +532,52 @@ public class SuperSkill {
         }
         return String.valueOf(ans);
     }
+    //给定一个字符串str，返回把str全部切成回文子串的最小分割数。
+    public static int minCut(String s){
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        boolean[][] f = process(chs);//用来判断是否是回文，预处理。用于降低时间复杂度
+        int[] dp = new int[n + 1];//dp[i] 表示以i起始到字符串最后，能产生最少的回文子串个数
+        dp[n] = 0;
+        dp[n - 1] = 1;
+        for (int i = n - 2; i >= 0 ; i--) {
+            dp[i] = n - i;
+            for (int j = i; j < n; j++) {
+                if(f[i][j]){
+                    dp[i] = Math.min(dp[i],dp[j + 1] + 1);
+                }
+            }
+        }
+        return dp[0] - 1;//分割次数就是最少回文子串个数-1
+    }
+    public static boolean[][] process(char[] chs){
+        int n = chs.length;
+        boolean[][] dp = new boolean[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = true;
+            for (int j = i + 1; j < n; j++) {
+                dp[i][j] = chs[i] == chs[j] && (j - i < 2 || dp[i + 1][j - 1]);
+            }
+        }
+        return dp;
+    }
+    //提供一个字符串，通过移除字符使其变成回文字符串，空串不认为是回文。请返回其一共有多少次移除方案。
+    //如果移除的字符依次构成的序列不一样就是不同方案
+    public static int deleteToP(String s){
+        char[] chs = s.toCharArray();
+        int n = chs.length;
+        int mod = 998244353;//如果字符串过长，需要模上一个值来减小数值
+        int[][] dp = new int[n][n];
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i][i] = 1;
+            for (int j = i + 1; j < n; j++) {
+                dp[i][j] = (dp[i][j - 1] + dp[i + 1][j] - dp[i + 1][j - 1] + (chs[i] == chs[j] ? dp[i + 1][j - 1] + 1 : 0)) % mod;
+                while(dp[i][j] < 0)//因为取模导致有的数取模了有的数没取模进行加减，不能反映原本的大小关系，需要及时加模值补偿
+                    dp[i][j] += mod;
+            }
+        }
+        return dp[0][n - 1];
+    }
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -552,5 +598,7 @@ public class SuperSkill {
         System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
         System.out.println(result("-1"));
         System.out.println(getPalindrome("ab123c32"));
+        System.out.println(minCut("abcdfcze"));
+        System.out.println(deleteToP("jksldk"));
     }
 }
