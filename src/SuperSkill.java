@@ -589,6 +589,41 @@ public class SuperSkill {
         }
         return dp[0][n - 1];
     }
+    //一个无序数组中，求最小的第k个数（BFPRT算法）
+
+    //给定一个正数n，求裂开的方法数(递归)
+    public static int getWay1(int n){
+        if(n == 0) return 0;
+        if(n == 1) return 1;
+        return process(1,n);
+    }
+    public static int process(int pre,int rest){
+        if(rest == 0) return 1;
+        if(pre > rest) return 0;
+        int res = 0;
+        for (int i = pre; i <= rest; i++) {
+            res += process(i,rest - i);
+        }
+        return res;
+    }
+    //给定一个正数n，求裂开的方法数(dp)
+    public static int getWay(int n){
+        if(n < 1) return 0;
+        if(n == 1) return 1;
+        int[][] dp = new int[n + 1][n + 1];
+        for (int i = 1; i <= n; i++) {
+            dp[i][0] = 1;
+        }
+        for (int pre = n; pre >= 1; pre--) {
+            dp[pre][pre] = 1;
+            for (int rest = pre + 1; rest <= n; rest++) {
+                dp[pre][rest] = dp[pre][rest - pre] + dp[pre + 1][rest];//斜率优化
+            }
+        }
+        return dp[1][n];
+    }
+    //找到二叉树中符合搜索二叉树条件的最大拓扑结构
+    //拓扑结构：不是子树，只要是能连起来的结构都算
     public static void main(String[] args) {
         System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
         System.out.println(maxXorNum(new int[]{0}));
@@ -611,5 +646,8 @@ public class SuperSkill {
         System.out.println(getPalindrome("ab123c32"));
         System.out.println(minCut("abcdfcze"));
         System.out.println(deleteToP("jksldk"));
+        System.out.println(getWay(20));
+        System.out.println(getWay1(20));
+
     }
 }
