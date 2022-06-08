@@ -1,6 +1,6 @@
 public class BFPRT {
     public static void main(String[] args){
-        System.out.println(getKthMinNum(new int[]{5,4,3,2,1},1));
+        System.out.println(getKthMinNum(new int[]{5,4,3,2},1));
     }
     public static int getKthMinNum(int[] arr,int k){
         return select(arr,0,arr.length - 1,k - 1);
