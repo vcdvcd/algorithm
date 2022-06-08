@@ -11,7 +11,6 @@ public class InsertSort {
             }
         }
     }
-
     public static void main(String[] args) {
         int[] a={1,5,2,4,4,1,2,55,2};
         insertSort(a);

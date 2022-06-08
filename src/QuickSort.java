@@ -7,7 +7,7 @@ public class QuickSort {
     }
 
     public static void main(String[] args) {
-        int[] a = {5, 6, 2, 5};
+        int[] a = {5,2,3,4,3,4,-1,48,31,34,0,312,34,32,13,4,90};
         quickSort(a, 0, a.length - 1);
         for (int i = 0; i < a.length; i++) {
             System.out.println(a[i]);

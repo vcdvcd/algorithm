@@ -590,7 +590,66 @@ public class SuperSkill {
         return dp[0][n - 1];
     }
     //一个无序数组中，求最小的第k个数（BFPRT算法）
-
+    public static int getKthMin(int[] arr,int i){
+        return select(arr,0,arr.length - 1,i - 1);
+    }
+    public static int select(int[] arr,int begin,int end,int aim){
+        if(begin == end)
+            return arr[begin];
+        int s = getMidofMid(arr,begin,end);
+        int[] p = partition(arr,begin,end,s);
+        if(aim < p[0]){
+            return select(arr,begin,p[0] - 1,aim);
+        }else if(aim > p[1])
+            return select(arr,p[1] + 1,end,aim);
+        else
+            return arr[aim];
+    }
+    public static int[] partition(int[] arr,int begin,int end,int s){
+        int L = begin - 1;
+        int R = end + 1;
+        int cur = begin;
+        while(cur != R){
+            if(arr[cur] < s){
+                swap(arr,++L,cur++);
+            }else if(arr[cur] > s){
+                swap(arr,--R,cur);
+            }else{
+                cur++;
+            }
+        }
+        return new int[]{L + 1,R - 1};
+    }
+    public static void swap(int[] arr,int a,int b){
+        int t = arr[a];
+        arr[a] = arr[b];
+        arr[b] = t;
+    }
+    public static int getMidofMid(int[] a,int begin,int end){
+        int n = end - begin + 1;
+        int offset = n % 5 == 0 ? 0 : 1;
+        int m = n / 5 + offset;
+        int[] midArr = new int[m];
+        for (int i = 0; i < midArr.length; i++) {
+            int beginI= begin + i * 5;
+            int endI = beginI + 4;
+            midArr[i] = getMid(a,beginI,Math.min(endI,end));
+        }
+        return select(midArr,0,midArr.length - 1,(midArr.length - 1) / 2);
+    }
+    public static int getMid(int[] arr,int begin,int end){
+        insertSort(arr,begin,end);
+        int mid = (begin + end) / 2;
+        return arr[mid];
+    }
+    public static void insertSort(int[] a,int begin,int end){
+        for (int i = begin; i <= end - 1; i++) {
+            for (int j = i + 1; j <= end; j++) {
+                if(a[i] > a[j])
+                    swap(a,i,j);
+            }
+        }
+    }
     //给定一个正数n，求裂开的方法数(递归)
     public static int getWay1(int n){
         if(n == 0) return 0;
@@ -625,29 +684,29 @@ public class SuperSkill {
     //找到二叉树中符合搜索二叉树条件的最大拓扑结构
     //拓扑结构：不是子树，只要是能连起来的结构都算
     public static void main(String[] args) {
-        System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
-        System.out.println(maxXorNum(new int[]{0}));
-        System.out.println(coins(new int[]{3,2,5},new int[]{1,2,4},5));
-        System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
-        System.out.println(getNo(3,5));
-        System.out.println(live(new int[]{1,3,5},20,0));
-        int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
-        List<List<Integer>> lists = buildingOutline(m);
-        System.out.println(getMaxLength(new int[]{1,1,1}, 8));
-        System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
-        System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
-        System.out.println(nim(new int[]{1,2,1,2,1,2}));
-        System.out.println(getString(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
-                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},8888));
-        System.out.println(getNum(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
-                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},"SPRING"));
-        System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
-        System.out.println(result("-1"));
-        System.out.println(getPalindrome("ab123c32"));
-        System.out.println(minCut("abcdfcze"));
-        System.out.println(deleteToP("jksldk"));
-        System.out.println(getWay(20));
-        System.out.println(getWay1(20));
-
+//        System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
+//        System.out.println(maxXorNum(new int[]{0}));
+//        System.out.println(coins(new int[]{3,2,5},new int[]{1,2,4},5));
+//        System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
+//        System.out.println(getNo(3,5));
+//        System.out.println(live(new int[]{1,3,5},20,0));
+//        int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
+//        List<List<Integer>> lists = buildingOutline(m);
+//        System.out.println(getMaxLength(new int[]{1,1,1}, 8));
+//        System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
+//        System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
+//        System.out.println(nim(new int[]{1,2,1,2,1,2}));
+//        System.out.println(getString(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
+//                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},8888));
+//        System.out.println(getNum(new char[]{'A','B','C','D','E','F','G','H','I','J','K',
+//                'L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'},"SPRING"));
+//        System.out.println(snake(new int[][]{{1, -4, 10}, {3, -2, -1}, {2, -1, 0}, {0, 5, -2}}));
+//        System.out.println(result("-1"));
+//        System.out.println(getPalindrome("ab123c32"));
+//        System.out.println(minCut("abcdfcze"));
+//        System.out.println(deleteToP("jksldk"));
+//        System.out.println(getWay(20));
+//        System.out.println(getWay1(20));
+        System.out.println(getKthMin(new int[]{5,4,3,2,1},5));
     }
 }
