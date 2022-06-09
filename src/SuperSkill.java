@@ -681,8 +681,44 @@ public class SuperSkill {
         }
         return dp[1][n];
     }
-    //找到二叉树中符合搜索二叉树条件的最大拓扑结构
-    //拓扑结构：不是子树，只要是能连起来的结构都算
+    //完美洗牌问题
+    //给定一个长度为偶数的数组啊让人，长度为2*N。前N个为左部分，后N个为右部分。
+    // arr就可以表示为{L1,L2,...Ln,R1,R2...Rn}
+    //把它调整为{R1,L1,R2,L2,...Rn,Ln}
+    public static void shuffle(int[] arr){
+        heapSort(arr);
+
+    }
+    public static void heapSort(int[] arr){
+        for (int i = arr.length / 2 - 1; i >= 0; --i) {
+            heapify(arr,i,arr.length);
+        }
+        int heapSize = arr.length;
+        swap(arr,0,--heapSize);
+        while(heapSize > 0){
+            heapify(arr,0,heapSize);
+            swap(arr,0,--heapSize);
+        }
+    }
+    public static void heapInsert(int[] arr,int index){
+        while(arr[(index - 1) / 2] < arr[index]){
+            swap(arr,index,(index - 1) / 2);
+            index = (index - 1) / 2;
+        }
+    }
+    public static void heapify(int[] arr,int index,int heapSize){
+        int left = index * 2 + 1;
+        while(left < heapSize){
+            int largest = left + 1 < heapSize && arr[left + 1] > arr[left] ? left + 1 : left;
+            largest = arr[largest] > arr[index] ? largest : index;
+            if(largest == index){
+                break;
+            }
+            swap(arr,index,largest);
+            index = largest;
+            left = index * 2 + 1;
+        }
+    }
     public static void main(String[] args) {
 //        System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
 //        System.out.println(maxXorNum(new int[]{0}));

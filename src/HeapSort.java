@@ -64,8 +64,8 @@ public class HeapSort {
     }
     public static void main(String[] args) {
         int[] a = {5,6,8,1,5};
-//        heapSort(a,0);
-        sortedArrDistanceLessK(a,3);
+        heapSort(a,0);
+//        sortedArrDistanceLessK(a,3);
         for (int num:
              a) {
             System.out.println(num);

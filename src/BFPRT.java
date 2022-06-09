@@ -1,6 +1,9 @@
+import java.io.IOException;
+//一个无序数组中，求最小的第k个数（BFPRT算法）
 public class BFPRT {
-    public static void main(String[] args){
-        System.out.println(getKthMinNum(new int[]{5,4,3,2},1));
+    public static void main(String[] args) throws IOException {
+        int k = Reader.nextInt();
+        System.out.println(getKthMinNum(new int[]{5,4,3,2},k));
     }
     public static int getKthMinNum(int[] arr,int k){
         return select(arr,0,arr.length - 1,k - 1);

@@ -1,6 +1,7 @@
 import java.util.HashMap;
 import java.util.Scanner;
-
+//找到二叉树中符合搜索二叉树条件的最大拓扑结构
+//拓扑结构：不是子树，只要是能连起来的结构都算
 public class BiggestBSTTopologyInTree {
     public static class Node{
         public int value;
