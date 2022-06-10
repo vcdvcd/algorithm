@@ -766,7 +766,7 @@ public class SuperSkill {
             left = index * 2 + 1;
         }
     }
-    //正则表达式匹配 leetcode 10
+    //正则表达式匹配 leetcode 10 默认是没有*开头的匹配串的
     public static boolean isMatchDp(String s,String p){
         char[] s1 = s.toCharArray();
         char[] p1 = p.toCharArray();
