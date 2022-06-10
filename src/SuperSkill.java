@@ -766,6 +766,28 @@ public class SuperSkill {
             left = index * 2 + 1;
         }
     }
+    //正则表达式匹配 leetcode 10
+    public static boolean isMatchDp(String s,String p){
+        char[] s1 = s.toCharArray();
+        char[] p1 = p.toCharArray();
+        int n = s1.length;
+        int m = p1.length;
+        boolean[][] dp = new boolean[n + 1][m + 1];
+        dp[0][0] = true;
+        for (int i = 0; i <= n; i++) {
+            for (int j = 1; j <= m; j++) {
+                if(p1[j - 1] == '*'){
+                    dp[i][j] |= dp[i][j - 2];
+                    if(i > 0 && j >= 2 && (p1[j - 2] == '.' || p1[j - 2] == s1[i - 1]))
+                        dp[i][j] |= dp[i - 1][j];
+                }else{
+                    if(i > 0 && (p1[j - 1] == '.' || p1[j - 1] == s1[i - 1]))
+                        dp[i][j] |= dp[i - 1][j - 1];
+                }
+            }
+        }
+        return dp[n][m];
+    }
     public static void main(String[] args) {
 //        System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
 //        System.out.println(maxXorNum(new int[]{0}));
@@ -793,6 +815,6 @@ public class SuperSkill {
         System.out.println(getKthMin(new int[]{5,4,3,2,1},5));
         int[] a = {8,7,2,4,3,0,6,9};
         shuffle(a,0,7);
-        System.out.println();
+        System.out.println(isMatchDp("mississippi","mis*is*ip*."));
     }
 }
