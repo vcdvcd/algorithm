@@ -685,9 +685,56 @@ public class SuperSkill {
     //给定一个长度为偶数的数组啊让人，长度为2*N。前N个为左部分，后N个为右部分。
     // arr就可以表示为{L1,L2,...Ln,R1,R2...Rn}
     //把它调整为{R1,L1,R2,L2,...Rn,Ln}
-    public static void shuffle(int[] arr){
-        heapSort(arr);
-
+    public static void shuffle(int[] arr,int L,int R){
+//        heapSort(arr);
+        while(R - L + 1 > 0) {
+            int s = R - L + 1;
+            int base = 3;
+            int k = 0;
+            while (base - 1 <= s) {
+                base *= 3;
+                k++;
+            }
+            base = base / 3;
+            int half = (base - 1) >> 1;
+            int m = (L + R) >> 1;
+            rotate(arr,L + half,m,m + half);
+            circle(arr,L,base - 1,k);
+            L = L + base - 1;
+        }
+    }
+    //位置公式
+    public static int modifyIndex(int i,int s){
+        int n = s >> 1;
+        if(i <= n)
+            return 2 * i;
+        else return (i - n) * 2 - 1;
+    }
+    //替换函数
+    public static void circle(int[] arr,int L,int s,int k){
+        for (int i = 0,t = 1; i < k;i++,t *= 3) {
+            int pre = arr[L + t - 1];
+            int cur = modifyIndex(t,s);
+            while(cur != t){
+                int next = arr[L + cur - 1];
+                arr[L + cur - 1] = pre;
+                pre = next;
+                cur = modifyIndex(cur,s);
+            }
+            arr[L + cur - 1] = pre;
+        }
+    }
+    //反转函数
+    public static void reverse(int[] arr,int L,int R){
+        while(L < R){
+            swap(arr,L++,R--);
+        }
+    }
+    //旋转函数
+    public static void rotate(int[] arr,int L,int m,int R){
+        reverse(arr,L,m);
+        reverse(arr,m + 1,R);
+        reverse(arr,L,R);
     }
     public static void heapSort(int[] arr){
         for (int i = arr.length / 2 - 1; i >= 0; --i) {
@@ -744,5 +791,8 @@ public class SuperSkill {
 //        System.out.println(getWay(20));
 //        System.out.println(getWay1(20));
         System.out.println(getKthMin(new int[]{5,4,3,2,1},5));
+        int[] a = {8,7,2,4,3,0,6,9};
+        shuffle(a,0,7);
+        System.out.println();
     }
 }
