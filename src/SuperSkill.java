@@ -795,8 +795,8 @@ public class SuperSkill {
 //        System.out.println(findKthNum(new int[]{8,100,200,300,400,500,1000,10000},new int[]{16,17,20,35,74,86},8));
 //        System.out.println(getNo(3,5));
 //        System.out.println(live(new int[]{1,3,5},20,0));
-//        int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
-//        List<List<Integer>> lists = buildingOutline(m);
+        int[][] m = {{2,5,6},{1,7,4},{4,6,7},{3,6,5},{10,13,2},{9,11,3},{12,14,4},{10,12,5}};
+        List<List<Integer>> lists = buildingOutline(m);
 //        System.out.println(getMaxLength(new int[]{1,1,1}, 8));
 //        System.out.println(maxSubArrayLen(new int[]{1,1,-5,2,3},0));
 //        System.out.println(getMaxLengthPlus(new int[]{50, -10, 5, -2, 20, 30}, 50));
