@@ -818,3 +818,90 @@ public class SuperSkill {
         System.out.println(isMatchDp("mississippi","mis*is*ip*."));
     }
 }
+//升级版汉诺塔问题
+// 牛客oj：CD30
+class HanotaPlus{
+    static int[] t;
+    static int mod = (int)1e9 + 7;
+    //递归
+    public static int hanota(int[] arr,int i,int from,int other,int to){
+        if(i == -1) return 0;
+        if(arr[i] == other) return -1;
+        if(arr[i] == from){
+            return hanota(arr,i - 1,from,to,other);
+        }else{
+            int res = hanota(arr,i - 1,other,from,to);
+            res = (t[i] + res) % mod;
+            return res;
+        }
+    }
+    //迭代
+    public static int hanota(int[] arr){
+        int from = 1;
+        int other = 2;
+        int to = 3;
+        int res = 0;
+        int max = 0;
+        int tmp;
+        int i = arr.length - 1;
+        while(i >= 0){
+            if(arr[i] == other) return -1;
+            if(arr[i] == from){
+                tmp = other;
+                other = to;
+                to = tmp;
+            }else{
+                res = (t[i] + res) % mod;
+                tmp = from;
+                from = other;
+                other = tmp;
+            }
+            i--;
+        }
+        return res;
+    }
+    public static void main(String[] args) {
+        int n = 10000;
+        int[] arr = new int[n];
+        t =  new int[n];
+        for(int i = 0 ;i < n;i++){
+            arr[i] = 3;
+        }
+        t[0] = 1;
+        for (int i = 1; i < n; i++) {
+            t[i] = (t[i - 1] * 2) % mod;
+        }
+        System.out.println(hanota(arr,n - 1,1,2,3));
+        System.out.println(hanota(arr));
+    }
+}
+class PokeBalloon{
+    //leetcode312 戳气球
+    //dp版本
+    //arr数组是经过预处理的数组，并不是原数组
+    //如果不懂，看详细题解链接：https://leetcode.cn/problems/burst-balloons/solution/tu-jie-dong-tai-gui-hua-jie-jue-chuo-qi-cx18h/
+    public static int maxCoins(int[] nums){
+        int n = nums.length;
+        int[] arr = new int[n + 2];//预处理原数组，在头尾各加一个1，便于边界处理
+        //dp[i][j]含义：在i+1->j-1范围内戳气球能达到的最大分数
+        int[][] dp = new int[n + 2][n + 2];
+        arr[0] = arr[n + 1] = 1;
+        for (int i = 1; i <= n; i++) {
+            arr[i] = nums[i - 1];
+        }
+        //因为依赖关系需要其左侧和下侧的数据，那么dp数组的遍历，应当从下往上，再从左往右
+        for (int i = n; i >= 0; i--) {
+            for (int j = i + 1; j < n + 2; j++) {
+                //枚举行为，无法斜率优化
+                for (int k = i + 1; k < j; k++) {
+                    dp[i][j] = Math.max(dp[i][j],dp[i][k] + dp[k][j] + arr[i] * arr[k] * arr[j]);
+                }
+            }
+        }
+        return dp[0][n + 1];
+    }
+    public static void main(String[] args) {
+        int[] nums = {5,2,5,7,3,1,5,1,3,45,23};
+        System.out.println(maxCoins(nums));
+    }
+}

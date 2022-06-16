@@ -284,6 +284,24 @@ public class Dp {
         }
         return dp[(1 << n) - 1] == sum;
     }
+    // ==========for test ==============
+    static int[][] dp = new int [15][16];
+    public static void beg01(int[] w,int[] v,int W){
+        int m = v.length;
+        for (int i = w[0]; i <= W; i++) {
+            dp[0][i] = v[0];
+        }
+        for(int i = 1;i < m;i++){
+            for(int j = 1 ;j <= W;j++){
+                if(j - w[i] >= 0){
+                    dp[i][j] = Math.max(dp[i - 1][j],dp[i - 1][j - w[i]] + v[i]);
+                }
+                else{
+                    dp[i][j] = dp[i - 1][j];
+                }
+            }
+        }
+    }
     public static void main(String[] args) {
         //System.out.println(f1(new int[]{2,3,3,5,7},19,0));
         //System.out.println(f4(new int[]{2,3,3,5,7},19));
@@ -298,11 +316,18 @@ public class Dp {
 //        list.forEach(System.out::println);
 //        isSubsequence("abc", "ahbgdc");
 //        System.out.println(maxRotateFunction(new int[]{}));
-        StringBuilder sb = new StringBuilder("abc");
-        long a = (long) (10e8 + 7);
-        System.out.println(a);
+//        StringBuilder sb = new StringBuilder("abc");
+//        long a = (long) (10e8 + 7);
+//        System.out.println(a);
 //        src.remove(1);
 //        map.put(des,2);
         Deque d = new LinkedList();
+        beg01(new int[]{3,2,1,5,10},new int[]{4,5,1,7,9},15);
+        for (int i = 0; i < dp.length; i++) {
+            for (int j = 0; j < dp[0].length; j++) {
+                System.out.print(dp[i][j] + " ");
+            }
+            System.out.println();
+        }
     }
 }

@@ -1,4 +1,5 @@
 public class EorTrie {
+    //子数组的最大异或和
     public static class Node{
         Node[] nexts = new Node[2];//设置路径，只有0和1
     }
@@ -31,7 +32,7 @@ public class EorTrie {
         }
     }
     public static void main(String[] args) {
-        int[] arr = {3,-28,-29,2,500,10,-1000,50,60,0};
+        int[] arr = {3,10,5,25,2,8};
         NumTrie trie = new NumTrie();
         trie.add(0);//最开始的前缀异或和是0
         int max = Integer.MIN_VALUE;
