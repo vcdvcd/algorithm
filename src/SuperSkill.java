@@ -875,11 +875,11 @@ class HanotaPlus{
         System.out.println(hanota(arr));
     }
 }
+//leetcode312 戳气球
+//dp版本
+//arr数组是经过预处理的数组，并不是原数组
+//如果不懂，看详细题解链接：https://leetcode.cn/problems/burst-balloons/solution/tu-jie-dong-tai-gui-hua-jie-jue-chuo-qi-cx18h/
 class PokeBalloon{
-    //leetcode312 戳气球
-    //dp版本
-    //arr数组是经过预处理的数组，并不是原数组
-    //如果不懂，看详细题解链接：https://leetcode.cn/problems/burst-balloons/solution/tu-jie-dong-tai-gui-hua-jie-jue-chuo-qi-cx18h/
     public static int maxCoins(int[] nums){
         int n = nums.length;
         int[] arr = new int[n + 2];//预处理原数组，在头尾各加一个1，便于边界处理
