@@ -788,6 +788,65 @@ public class SuperSkill {
         }
         return dp[n][m];
     }
+    //leetcode87 扰乱字符串
+    //主函数
+    public static boolean isScramble(String s1, String s2){
+        char[] c1 = s1.toCharArray();
+        char[] c2 = s2.toCharArray();
+        int n = c1.length;
+        if(!check(c1,c2)) return false;
+        return dpCheck(c1,c2);
+    }
+    //检验函数
+    public static boolean check(char[] c1,char[] c2){
+        if(c1.length != c2.length) return false;
+        int[] map = new int[256];
+        int n = c1.length;
+        for(int i = 0;i < n;i++){
+            ++map[c1[i] - ' '];
+        }
+        for(int i = 0;i < n;i++){
+            --map[c2[i] - ' '];
+            if(map[c2[i] - ' '] < 0) return false;
+        }
+        return true;
+    }
+    //递归
+    public static boolean f(char[] c1,char[] c2,int l1,int l2,int size){
+        if(size == 1) return c1[l1] == c2[l2];
+        for(int i = 1;i < size;i++){
+            if(f(c1,c2,l1,l2,i) && f(c1,c2,l1 + i,l2 + i,size - i)
+            || (f(c1,c2,l1,l2 + size - i,i) && f(c1,c2,l1 + i,l2,size - i)))
+                return true;
+        }
+        return false;
+    }
+    //dp
+    public static boolean dpCheck(char[] c1,char[] c2){
+        int n = c1.length;
+        boolean[][][] dp = new boolean[n][n][n + 1];
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < n; j++) {
+                dp[i][j][1] = c1[i] == c2[j];
+            }
+        }
+        for (int size = 2; size <= n; size++) {
+            for (int i = 0; i <= n - size; i++) {
+                for (int j = 0; j <= n - size; j++) {
+                    for (int k = 1; k < size; k++) {
+                        if(dp[i][j][k] && dp[i + k][j + k][size - k] || (dp[i][j + size - k][k] && dp[i + k][j][size - k])) {
+                            dp[i][j][size] = true;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return dp[0][0][n];
+    }
+    //样例
+    //NLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQCadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxx
+    //CadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxxNLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQ
     public static void main(String[] args) {
 //        System.out.println(maxDiff(new int[]{7,0,80,90,56,45,25,31,48,78,32}));
 //        System.out.println(maxXorNum(new int[]{0}));
@@ -816,6 +875,8 @@ public class SuperSkill {
         int[] a = {8,7,2,4,3,0,6,9};
         shuffle(a,0,7);
         System.out.println(isMatchDp("mississippi","mis*is*ip*."));
+        System.out.println(isScramble("NLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQCadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxx"
+                ,"CadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxxNLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQ"));
     }
 }
 //升级版汉诺塔问题
