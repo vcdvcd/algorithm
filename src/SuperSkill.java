@@ -844,6 +844,48 @@ public class SuperSkill {
         }
         return dp[0][0][n];
     }
+    public static String minWindow(String s, String t) {
+        if(s.equals(t)) return s;
+        char[] c1 = s.toCharArray();
+        char[] c2 = t.toCharArray();
+        int n = c2.length;
+        int m = c1.length;
+        if(n > m) return "";
+        HashMap<Character,Integer> map = new HashMap<>();
+        int total = 0;
+        for(int i = 0;i < n;i++){
+            map.put(c2[i],map.getOrDefault(c2[i],0) + 1);
+        }
+        for(int v : map.values()){
+            total += v;
+        }
+        int min = m;
+        int L = 0,R = -1,left = 0,right = 0;
+        while(right < m){
+            if(!map.containsKey(c1[right])){
+                right++;
+                continue;
+            }
+            map.put(c1[right],map.get(c1[right]) - 1);
+            if(map.get(c1[right]) >= 0) total--;
+            if(total == 0){
+                while(!map.containsKey(c1[left]) || map.get(c1[left]) < 0){
+                    if(map.containsKey(c1[left])) map.put(c1[left],map.get(c1[left]) + 1);
+                    left++;
+                }
+                if(min >= right - left + 1){
+                    min = right - left + 1;
+                    L = left;
+                    R = right;
+                }
+                map.put(c1[left],map.get(c1[left]) + 1);
+                total++;
+                left++;
+            }
+            right++;
+        }
+        return s.substring(L,R + 1);
+    }
     //样例
     //NLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQCadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxx
     //CadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxxNLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQ
@@ -877,6 +919,7 @@ public class SuperSkill {
         System.out.println(isMatchDp("mississippi","mis*is*ip*."));
         System.out.println(isScramble("NLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQCadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxx"
                 ,"CadnJSxOpYrMaUpJIgyzlWhjrPtFZcZdwjxxNLzoXToCVUEdLepWFipHnwOGreecerfQDERcYPPbSpAzOVXYQPLqaDBtROLmXhkQ"));
+        System.out.println(minWindow("12345","344"));
     }
 }
 //升级版汉诺塔问题
